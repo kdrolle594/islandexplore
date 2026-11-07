@@ -453,6 +453,7 @@ const BIZ = [
   {name:"Quick Fix Phone Repair",cat:"service",zone:"fpo",icon:"📱",area:"Freeport",phone:"242-555-0133",about:"Screen and battery repair, often the same day.",hours:[null,["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["10:00","14:00"]]},
   {name:"Eight Mile Rock Laundry",cat:"service",zone:"emr",icon:"🧺",area:"Eight Mile Rock",phone:"242-555-0156",about:"Wash, dry and fold. Drop off in the morning, pick up by evening.",hours:[null,["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"]]},
   {name:"Blue Hole Kayaks",cat:"tour",zone:"east",icon:"🛶",area:"Near Lucayan National Park",phone:"242-555-0164",about:"Kayak rentals and guided mangrove trips.",hours:[["9:00","16:00"],null,["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"]]},
+  {name:"McLean’s Town Fish Shack",cat:"eat",zone:"east",icon:"🐟",area:"McLean’s Town, East End",phone:"242-555-0148",about:"Fresh catch of the day, conch fritters and cold drinks by the water.",hours:[["12:00","20:00"],null,["11:00","20:00"],["11:00","20:00"],["11:00","20:00"],["11:00","21:00"],["11:00","21:00"]]},
   {name:"West End Scooter Rental",cat:"tour",zone:"west",icon:"🛵",area:"West End",phone:"242-555-0127",about:"Scooter and bike rentals by the day.",hours:wk("8:00","18:00")}
 ];
 
@@ -473,6 +474,10 @@ const JOBS = [
   {title:"Electrician’s helper",cat:"trades",zone:"fpo",employer:"Bright Spark Electrical",area:"Freeport",type:"Full-time",posted:4,about:"Assist licensed electricians on homes and shops. You need your own transport.",apply:"Call 242-555-0109",phone:"242-555-0109"},
   {title:"Phone repair trainee",cat:"trades",zone:"fpo",employer:"Quick Fix Phone Repair",area:"Freeport",type:"Part-time",posted:6,about:"Learn to fix screens and batteries. Good for someone handy with small tools.",apply:"Call 242-555-0133",phone:"242-555-0133"},
   {title:"Scooter rental attendant",cat:"retail",zone:"west",employer:"West End Scooter Rental",area:"West End",type:"Seasonal",posted:2,about:"Check scooters in and out, take payments and give safety briefings.",apply:"Call 242-555-0127",phone:"242-555-0127"},
+  {title:"Park tour guide",cat:"hosp",zone:"east",employer:"Lucayan Park Tours",area:"Lucayan National Park",type:"Full-time",posted:3,about:"Lead small groups through the caves, mangrove boardwalk and Gold Rock Beach. Must enjoy talking to visitors.",apply:"Call 242-555-0181",phone:"242-555-0181"},
+  {title:"Cook",cat:"hosp",zone:"east",employer:"McLean’s Town Fish Shack",area:"McLean’s Town, East End",type:"Part-time",posted:4,about:"Clean and fry fish, make conch fritters and keep the kitchen tidy. Weekend shifts.",apply:"Call 242-555-0148",phone:"242-555-0148"},
+  {title:"Boat captain",cat:"trades",zone:"east",employer:"Peterson Cay Boat Tours",area:"Barbary Beach",type:"Seasonal",posted:8,about:"Run snorkel trips to Peterson Cay. You need a valid boat captain’s licence.",apply:"Email crew@example.com",email:"crew@example.com"},
+  {title:"Laundry attendant",cat:"retail",zone:"emr",employer:"Eight Mile Rock Laundry",area:"Eight Mile Rock",type:"Part-time",posted:5,about:"Wash, dry and fold customer orders and keep the machines running. Morning shifts.",apply:"Call 242-555-0156",phone:"242-555-0156"},
   {title:"Office assistant",cat:"office",zone:"fpo",employer:"Coral Insurance Agency",area:"Downtown Freeport",type:"Full-time",posted:9,about:"Filing, phones and customer emails. Basic computer skills needed.",apply:"Email office@example.com",email:"office@example.com"}
 ];
 
@@ -546,7 +551,7 @@ function matches(view, {ignoreZone=false, ignoreCat=false} = {}){
 function renderStrip(){
   $("#stops").innerHTML = ZONES.map(z => {
     const n = matches(S.view,{ignoreZone:true}).filter(([it]) => it.zone===z.id || it.zone===null).length;
-    return `<li><button class="stop" data-z="${z.id}" aria-pressed="${S.zone===z.id}" aria-label="${z.label}, ${n} ${n===1?"result":"results"}">
+    return `<li><button class="stop" data-z="${z.id}" aria-pressed="${S.zone===z.id}" ${n===0 && S.zone!==z.id ? "disabled" : ""} aria-label="${z.label}, ${n} ${n===1?"result":"results"}">
       <span class="dot" aria-hidden="true"></span><span class="nm">${z.label}</span><span class="ct" aria-hidden="true">${n}</span></button></li>`;
   }).join("");
   $("#whole").setAttribute("aria-pressed", !S.zone);
