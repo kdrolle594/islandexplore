@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Island Explore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --aqua:#00A3AD; --gold:#FFC72C; --ink:#0A1F26;
+  --bg:#EAF6F5; --surface:#FFFFFF; --text:#0A1F26; --muted:#4A6168;
+  --chip:#D3ECEA; --line:#BFDEDB; --open:#1E8E4E; --closed:#B3412E;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#071A1F; --surface:#0F2A31; --text:#E8F5F4; --muted:#9DBABE;
+    --chip:#163A42; --line:#1F4952; --open:#5CD48E; --closed:#F08A75; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#071A1F; --surface:#0F2A31; --text:#E8F5F4; --muted:#9DBABE;
+  --chip:#163A42; --line:#1F4952; --open:#5CD48E; --closed:#F08A75; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+.hero{background:var(--aqua);color:#fff;position:relative;overflow:hidden;padding:28px 24px 64px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:20px}
+.sun{width:26px;height:26px;border-radius:50%;background:var(--gold)}
+.tagline{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:.92;letter-spacing:-.02em;margin:24px 0 0;font-size:clamp(44px,11vw,100px)}
+.tagline span{display:block}
+.tagline span:nth-child(2){color:var(--ink)}
+.tagline span:nth-child(3){color:var(--gold)}
+.hero p{max-width:36ch;margin:18px 0 0;font-size:18px}
+.wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:50px;display:block}
+.wave path{fill:var(--ink)}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--ink);display:flex;justify-content:center;gap:6px;padding:10px 12px;overflow-x:auto}
+.tab{background:transparent;border:0;color:#CFE7E5;font-weight:700;padding:10px 18px;border-radius:999px;min-height:48px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--gold);color:var(--ink)}
+
+main{max-width:1100px;margin:0 auto;padding:8px 20px 40px}
+.view[hidden]{display:none}
+h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:28px;margin:24px 0 10px;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:-4px 0 14px;max-width:60ch}
+
+.today{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px}
+.ev{flex:0 0 auto;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:10px;padding:10px 14px;min-width:220px}
+.ev b{display:block}
+.ev small{color:var(--muted)}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 18px}
+.chip{border:0;background:var(--chip);padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer;min-height:48px}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--gold);color:var(--ink)}}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--gold);color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;display:flex;flex-direction:column}
+.card .pic{height:110px;display:grid;place-items:center;font-size:52px}
+.card .body{padding:14px 16px 16px}
+.card h3{margin:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:21px;font-weight:800;line-height:1.15}
+.meta{color:var(--muted);font-size:15px;margin-top:2px}
+.tag{display:inline-block;margin-top:10px;margin-right:6px;font-size:14px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--chip)}
+.status{font-weight:700;font-size:15px;margin-top:8px}
+.status.on{color:var(--open)}
+.status.off{color:var(--closed)}
+
+.jobs{display:flex;flex-direction:column;gap:12px}
+.job{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;text-align:left;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center}
+.job h3{margin:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:21px;font-weight:800}
+.job .when{color:var(--muted);font-size:14px;text-align:right}
+.search{width:100%;max-width:420px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:0 14px;font:inherit;margin-bottom:12px}
+.empty{color:var(--muted);padding:20px 0}
+
+.take{margin-top:32px;display:flex;gap:20px;align-items:center;background:var(--ink);color:#fff;border-radius:16px;padding:20px;flex-wrap:wrap}
+.take h2{margin:0 0 4px;color:var(--gold)}
+.take p{margin:0;max-width:44ch}
+.qr{background:#fff;padding:10px;border-radius:10px;line-height:0}
+.qr img,.qr canvas{width:128px!important;height:128px!important}
+
+.scrim{position:fixed;inset:0;background:rgba(5,20,25,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.scrim.open{display:flex}
+.sheet{background:var(--surface);width:100%;max-width:640px;border-radius:20px 20px 0 0;max-height:90vh;overflow:auto;padding-bottom:env(safe-area-inset-bottom,0px);animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.sheet{animation:none}}
+.sheet .pic{height:150px;display:grid;place-items:center;font-size:80px}
+.sheet .in{padding:20px 22px 24px}
+.sheet h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:30px;margin:0;font-weight:800;line-height:1.05}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:14px 0;font-size:16px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;font-weight:600}
+.hours{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 4px}
+.hours td{padding:4px 0;border-bottom:1px solid var(--line)}
+.hours td:last-child{text-align:right;font-weight:600}
+.hours tr.today td{color:var(--aqua);font-weight:800}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 20px;border-radius:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer}
+.btn.go{background:var(--gold);color:var(--ink)}
+.btn.alt{background:var(--chip);color:var(--text)}
+.mini{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.mini .qr img,.mini .qr canvas{width:88px!important;height:88px!important}
+.note{margin-top:28px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="brand"><span class="sun" aria-hidden="true"></span>Island Explore</div>
+  <h1 class="tagline"><span>See more.</span><span>Do more.</span><span>Explore more.</span></h1>
+  <p>Things to do, local businesses and job openings across Grand Bahama, all in one place.</p>
+  <svg class="wave" viewBox="0 0 1200 50" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 200 0 400 52 600 26 C 800 0 1000 52 1200 26 L1200 50 L0 50 Z"/></svg>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button class="tab" role="tab" data-v="explore">Things to do</button>
+  <button class="tab" role="tab" data-v="businesses">Local businesses</button>
+  <button class="tab" role="tab" data-v="jobs">Job openings</button>
+</nav>
+
+<main>
+  <section class="view" id="v-explore">
+    <h2>Happening this week</h2>
+    <div class="today" id="today"></div>
+    <h2>Things to do</h2>
+    <div class="chips" id="chipsX" role="group" aria-label="Filter things to do"></div>
+    <div class="grid" id="gridX"></div>
+  </section>
+
+  <section class="view" id="v-businesses" hidden>
+    <h2>Local businesses</h2>
+    <p class="lead">Hours, location and contact for small businesses around the island. Green means open right now.</p>
+    <div class="chips" id="chipsB" role="group" aria-label="Filter businesses"></div>
+    <div class="grid" id="gridB"></div>
+  </section>
+
+  <section class="view" id="v-jobs" hidden>
+    <h2>Job openings</h2>
+    <p class="lead">New openings from local employers. Tap a job to see how to apply.</p>
+    <input class="search" id="jobSearch" type="search" placeholder="Search jobs, like ‘cook’ or ‘Freeport’" aria-label="Search jobs">
+    <div class="chips" id="chipsJ" role="group" aria-label="Filter jobs"></div>
+    <div class="jobs" id="listJ"></div>
+  </section>
+
+  <section class="take">
+    <div class="qr" id="qrMain"></div>
+    <div>
+      <h2>Take this with you</h2>
+      <p>Scan with your phone camera to open Island Explore on your phone. No app needed.</p>
+    </div>
+  </section>
+
+  <p class="note">Prototype by the Young Innovators Club. Businesses, jobs and phone numbers are made-up samples. Check details before visiting.</p>
+</main>
+
+<div class="scrim" id="scrim" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle" id="sheet"></div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const XCATS = [
+  {id:"all",label:"Everything"},
+  {id:"beach",label:"Beaches",color:"#FFE7A3"},
+  {id:"nature",label:"Nature",color:"#BFE8C9"},
+  {id:"water",label:"Water fun",color:"#A9E4EA"},
+  {id:"food",label:"Food",color:"#F7C2B4"},
+  {id:"shop",label:"Shopping",color:"#E2D2F5"}
+];
+const SPOTS = [
+  {name:"Gold Rock Beach",cat:"beach",icon:"🏖️",area:"Lucayan National Park, east of Freeport",price:"Park entry fee",best:"Low tide for the sandbars",about:"A long, quiet beach where the tide pulls back to show wide sandbars. Bring water and shade."},
+  {name:"Taino Beach",cat:"beach",icon:"🌴",area:"Lucaya",price:"Free",best:"Afternoon",about:"Easy to reach from the Lucaya hotels, with calm water and beach bars nearby."},
+  {name:"Lucayan National Park caves",cat:"nature",icon:"🦇",area:"East of Freeport",price:"Park entry fee",best:"Morning",about:"Walk down into one of the world’s longest underwater cave systems, then cross the mangrove boardwalk."},
+  {name:"Garden of the Groves",cat:"nature",icon:"🌺",area:"Freeport",price:"Entry fee",best:"Morning or late afternoon",about:"Gardens, waterfalls, walking trails and a small hilltop chapel. Good for families."},
+  {name:"Peterson Cay",cat:"water",icon:"🐠",area:"Off the south shore, by boat",price:"Tour price",best:"Calm sea days",about:"A tiny island park with reef snorkeling. Reach it by boat or kayak tour."},
+  {name:"Dolphin and dive trips",cat:"water",icon:"🐬",area:"Port Lucaya",price:"Tour price",best:"Book a day ahead",about:"Diving, snorkeling and dolphin encounters run from Port Lucaya."},
+  {name:"Smith’s Point Fish Fry",cat:"food",icon:"🐟",area:"Smith’s Point",price:"$",best:"Wednesday night",about:"Fresh fried fish, conch and music with locals at the weekly fish fry."},
+  {name:"Port Lucaya Marketplace",cat:"shop",icon:"🛍️",area:"Port Lucaya",price:"Free to browse",best:"Evening for live music",about:"Shops, straw market, restaurants and live music around the harbour."},
+  {name:"Local conch stands",cat:"food",icon:"🐚",area:"Around the island",price:"$",best:"Lunch",about:"Try conch salad made fresh in front of you. Ask locals for their favourite stand."}
+];
+const EVENTS = [
+  {t:"Fish fry",w:"Smith’s Point",d:"Wednesday night"},
+  {t:"Live music",w:"Port Lucaya Marketplace",d:"Most evenings"},
+  {t:"Guided cave walk",w:"Lucayan National Park",d:"Ask at the park"}
+];
+
+const BCATS = [
+  {id:"all",label:"All"},
+  {id:"eat",label:"Food and drink",color:"#F7C2B4"},
+  {id:"shop",label:"Shops",color:"#E2D2F5"},
+  {id:"service",label:"Services",color:"#CFE0F7"},
+  {id:"tour",label:"Tours and rentals",color:"#A9E4EA"}
+];
+/* days: 0=Sun ... 6=Sat. null = closed */
+const wk = (o,c) => [null,[o,c],[o,c],[o,c],[o,c],[o,c],[o,c]];
+const BIZ = [
+  {name:"Sea Grape Café",cat:"eat",icon:"☕",area:"Downtown Freeport",phone:"242-555-0141",about:"Breakfast, johnnycake and fresh juice.",hours:[["8:00","14:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["8:00","15:00"]]},
+  {name:"Lucaya Conch Shack",cat:"eat",icon:"🐚",area:"Lucaya",phone:"242-555-0172",about:"Conch salad, fritters and cracked conch made to order.",hours:[null,["11:00","21:00"],["11:00","21:00"],["11:00","21:00"],["11:00","22:00"],["11:00","22:00"],["11:00","22:00"]]},
+  {name:"Island Threads",cat:"shop",icon:"👕",area:"Port Lucaya Marketplace",phone:"242-555-0118",about:"Local-made shirts, hats and gifts.",hours:[["12:00","18:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","20:00"],["10:00","20:00"]]},
+  {name:"Straw Works",cat:"shop",icon:"👜",area:"Port Lucaya Marketplace",phone:"242-555-0190",about:"Handwoven straw bags, baskets and hats.",hours:wk("9:00","17:00")},
+  {name:"Quick Fix Phone Repair",cat:"service",icon:"📱",area:"Freeport",phone:"242-555-0133",about:"Screen and battery repair, often same day.",hours:[null,["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["10:00","14:00"]]},
+  {name:"Eight Mile Rock Laundry",cat:"service",icon:"🧺",area:"Eight Mile Rock",phone:"242-555-0156",about:"Wash, dry and fold. Drop off in the morning, pick up by evening.",hours:[null,["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"]]},
+  {name:"Blue Hole Kayaks",cat:"tour",icon:"🛶",area:"Lucayan National Park area",phone:"242-555-0164",about:"Kayak rentals and guided mangrove trips.",hours:[["9:00","16:00"],null,["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"]]},
+  {name:"West End Scooter Rental",cat:"tour",icon:"🛵",area:"West End",phone:"242-555-0127",about:"Scooter and bike rentals by the day.",hours:wk("8:00","18:00")}
+];
+
+const JCATS = [
+  {id:"all",label:"All jobs"},
+  {id:"hosp",label:"Hotels and food"},
+  {id:"retail",label:"Retail"},
+  {id:"trades",label:"Trades"},
+  {id:"office",label:"Office"}
+];
+const JOBS = [
+  {title:"Line cook",cat:"hosp",employer:"Lucaya Conch Shack",area:"Lucaya",type:"Full-time",posted:2,about:"Prep and cook seafood dishes. Experience helps but we will train.",apply:"Call 242-555-0172 or drop in after 3 pm"},
+  {title:"Front desk agent",cat:"hosp",employer:"Harbour View Inn",area:"Port Lucaya",type:"Full-time",posted:5,about:"Check guests in and out, answer calls, help with tour bookings.",apply:"Email jobs@example.com with your CV"},
+  {title:"Server, weekends",cat:"hosp",employer:"Sea Grape Café",area:"Downtown Freeport",type:"Part-time",posted:1,about:"Take orders and serve breakfast and lunch on Saturdays and Sundays.",apply:"Call 242-555-0141"},
+  {title:"Sales assistant",cat:"retail",employer:"Island Threads",area:"Port Lucaya Marketplace",type:"Part-time",posted:3,about:"Help customers, restock shelves, run the till.",apply:"Drop off your CV in store"},
+  {title:"Cashier",cat:"retail",employer:"Eastside Grocery",area:"Freeport",type:"Full-time",posted:7,about:"Run the till and help with stock. Early morning shifts.",apply:"Apply in person at the service desk"},
+  {title:"Electrician’s helper",cat:"trades",employer:"Bright Spark Electrical",area:"Freeport",type:"Full-time",posted:4,about:"Assist licensed electricians on homes and shops. Must have own transport.",apply:"Call 242-555-0109"},
+  {title:"Phone repair trainee",cat:"trades",employer:"Quick Fix Phone Repair",area:"Freeport",type:"Part-time",posted:6,about:"Learn to fix screens and batteries. Good with small tools.",apply:"Call 242-555-0133"},
+  {title:"Office assistant",cat:"office",employer:"Coral Insurance Agency",area:"Downtown Freeport",type:"Full-time",posted:9,about:"Filing, phones and customer emails. Basic computer skills needed.",apply:"Email office@example.com"}
+];
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const mapUrl = (name, area) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name + ", " + area + ", Grand Bahama");
+const mins = t => { const [h,m] = t.split(":").map(Number); return h*60+m; };
+function fmt(t){ let [h,m] = t.split(":").map(Number); const ap = h>=12?"pm":"am"; h = h%12||12; return m ? `${h}:${String(m).padStart(2,"0")} ${ap}` : `${h} ${ap}`; }
+function openNow(b){
+  const d = new Date(), h = b.hours[d.getDay()];
+  if (!h) return {on:false, text:"Closed today"};
+  const n = d.getHours()*60+d.getMinutes();
+  if (n >= mins(h[0]) && n < mins(h[1])) return {on:true, text:"Open now, closes " + fmt(h[1])};
+  if (n < mins(h[0])) return {on:false, text:"Closed, opens " + fmt(h[0])};
+  return {on:false, text:"Closed for today"};
+}
+const postedText = d => d===1 ? "Posted yesterday" : `Posted ${d} days ago`;
+function makeQR(el, text, size){
+  el.innerHTML = "";
+  if (window.QRCode) new QRCode(el,{text,width:size,height:size,colorDark:"#0A1F26",colorLight:"#ffffff"});
+  else el.textContent = "QR unavailable";
+}
+function chips(el, cats, current){
+  el.innerHTML = cats.map(c => `<button class="chip" aria-pressed="${c.id===current}" data-c="${c.id}">${c.label}</button>`).join("");
+}
+
+/* ---------- things to do ---------- */
+let curX = "all";
+$("#today").innerHTML = EVENTS.map(e => `<div class="ev"><b>${e.t}</b>${e.w}<br><small>${e.d}</small></div>`).join("");
+function renderX(){
+  chips($("#chipsX"), XCATS, curX);
+  $("#gridX").innerHTML = SPOTS.map((s,i)=>[s,i]).filter(([s]) => curX==="all"||s.cat===curX).map(([s,i]) => {
+    const c = XCATS.find(c=>c.id===s.cat);
+    return `<button class="card" data-x="${i}"><div class="pic" style="background:${c.color}" aria-hidden="true">${s.icon}</div>
+      <div class="body"><h3>${s.name}</h3><div class="meta">${s.area}</div><span class="tag">${c.label}</span></div></button>`;
+  }).join("");
+}
+$("#chipsX").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curX=b.dataset.c; renderX();} });
+
+/* ---------- businesses ---------- */
+let curB = "all";
+function renderB(){
+  chips($("#chipsB"), BCATS, curB);
+  $("#gridB").innerHTML = BIZ.map((b,i)=>[b,i]).filter(([b]) => curB==="all"||b.cat===curB).map(([b,i]) => {
+    const c = BCATS.find(c=>c.id===b.cat), st = openNow(b);
+    return `<button class="card" data-b="${i}"><div class="pic" style="background:${c.color}" aria-hidden="true">${b.icon}</div>
+      <div class="body"><h3>${b.name}</h3><div class="meta">${b.area}</div>
+      <div class="status ${st.on?"on":"off"}">${st.text}</div><span class="tag">${c.label}</span></div></button>`;
+  }).join("");
+}
+$("#chipsB").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curB=b.dataset.c; renderB();} });
+
+/* ---------- jobs ---------- */
+let curJ = "all";
+function renderJ(){
+  chips($("#chipsJ"), JCATS, curJ);
+  const q = $("#jobSearch").value.trim().toLowerCase();
+  const list = JOBS.map((j,i)=>[j,i])
+    .filter(([j]) => curJ==="all"||j.cat===curJ)
+    .filter(([j]) => !q || [j.title,j.employer,j.area,j.type].join(" ").toLowerCase().includes(q))
+    .sort((a,b) => a[0].posted - b[0].posted);
+  $("#listJ").innerHTML = list.length ? list.map(([j,i]) => `
+    <button class="job" data-j="${i}">
+      <div><h3>${j.title}</h3><div class="meta">${j.employer}, ${j.area}</div><span class="tag">${j.type}</span></div>
+      <div class="when">${postedText(j.posted)}</div>
+    </button>`).join("") : `<p class="empty">No jobs match that search. Try a different word or tap All jobs.</p>`;
+}
+$("#chipsJ").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curJ=b.dataset.c; renderJ();} });
+$("#jobSearch").addEventListener("input", renderJ);
+
+/* ---------- detail sheet ---------- */
+let lastFocus = null;
+function showSheet(html, qrText, qrLabel){
+  lastFocus = document.activeElement;
+  $("#sheet").innerHTML = html + `<div class="row mini"><div class="qr" id="qrSpot"></div><span>${qrLabel}</span></div>
+    <div class="row"><button class="btn alt" id="closeBtn">Back to list</button></div></div>`;
+  makeQR($("#qrSpot"), qrText, 88);
+  $("#scrim").classList.add("open"); $("#scrim").setAttribute("aria-hidden","false");
+  $("#closeBtn").focus();
+}
+function closeSheet(){
+  $("#scrim").classList.remove("open"); $("#scrim").setAttribute("aria-hidden","true");
+  if (lastFocus) lastFocus.focus();
+}
+function openX(i){
+  const s = SPOTS[i], c = XCATS.find(c=>c.id===s.cat), url = mapUrl(s.name, s.area);
+  showSheet(`<div class="pic" style="background:${c.color}" aria-hidden="true">${s.icon}</div><div class="in">
+    <h3 id="dTitle">${s.name}</h3><p>${s.about}</p>
+    <dl class="facts"><dt>Where</dt><dd>${s.area}</dd><dt>Cost</dt><dd>${s.price}</dd><dt>Best time</dt><dd>${s.best}</dd></dl>
+    <div class="row"><a class="btn go" href="${url}" target="_blank" rel="noopener">Get directions</a></div>`,
+    url, "Scan to open directions on your phone");
+}
+function openB(i){
+  const b = BIZ[i], c = BCATS.find(c=>c.id===b.cat), st = openNow(b), url = mapUrl(b.name, b.area), today = new Date().getDay();
+  const rows = [1,2,3,4,5,6,0].map(d => `<tr class="${d===today?"today":""}"><td>${DAYS[d]}</td><td>${b.hours[d]?fmt(b.hours[d][0])+" to "+fmt(b.hours[d][1]):"Closed"}</td></tr>`).join("");
+  showSheet(`<div class="pic" style="background:${c.color}" aria-hidden="true">${b.icon}</div><div class="in">
+    <h3 id="dTitle">${b.name}</h3><p>${b.about}</p>
+    <div class="status ${st.on?"on":"off"}">${st.text}</div>
+    <dl class="facts"><dt>Location</dt><dd>${b.area}</dd><dt>Phone</dt><dd>${b.phone}</dd></dl>
+    <table class="hours" aria-label="Opening hours"><tbody>${rows}</tbody></table>
+    <div class="row"><a class="btn go" href="${url}" target="_blank" rel="noopener">Get directions</a><a class="btn alt" href="tel:${b.phone}">Call</a></div>`,
+    url, "Scan to open directions on your phone");
+}
+function openJ(i){
+  const j = JOBS[i];
+  showSheet(`<div class="in"><h3 id="dTitle">${j.title}</h3>
+    <div class="meta">${j.employer}, ${j.area}</div><span class="tag">${j.type}</span>
+    <p>${j.about}</p>
+    <dl class="facts"><dt>How to apply</dt><dd>${j.apply}</dd><dt>Listed</dt><dd>${postedText(j.posted)}</dd></dl>`,
+    location.href.split("#")[0] + "#jobs", "Scan to see all jobs on your phone");
+}
+document.addEventListener("click", e => {
+  const x = e.target.closest("[data-x]"), b = e.target.closest("[data-b]"), j = e.target.closest("[data-j]");
+  if (x) openX(+x.dataset.x); else if (b) openB(+b.dataset.b); else if (j) openJ(+j.dataset.j);
+});
+$("#scrim").addEventListener("click", e => { if (e.target.id==="scrim" || e.target.id==="closeBtn") closeSheet(); });
+document.addEventListener("keydown", e => { if (e.key==="Escape") closeSheet(); });
+
+/* ---------- tabs via #hash ---------- */
+const VIEWS = ["explore","businesses","jobs"];
+function show(){
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "explore";
+  VIEWS.forEach(n => { $("#v-"+n).hidden = n!==v; });
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.v===v));
+}
+document.querySelector(".tabs").addEventListener("click", e => {
+  const t = e.target.closest(".tab"); if (!t) return;
+  if (location.hash !== "#"+t.dataset.v) location.hash = t.dataset.v; else show();
+});
+window.addEventListener("hashchange", show);
+
+renderX(); renderB(); renderJ(); show();
+makeQR($("#qrMain"), location.href.split("#")[0], 128);
+setInterval(renderB, 60000);
+</script>
+</body>
+</html>
