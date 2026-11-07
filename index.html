@@ -4,217 +4,432 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Island Explore</title>
+<meta name="description" content="Things to do, local businesses and job openings across Grand Bahama.">
+<meta name="theme-color" content="#04384A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
-  --aqua:#00A3AD; --gold:#FFC72C; --ink:#0A1F26;
-  --bg:#EAF6F5; --surface:#FFFFFF; --text:#0A1F26; --muted:#4A6168;
-  --chip:#D3ECEA; --line:#BFDEDB; --open:#1E8E4E; --closed:#B3412E;
-  color-scheme: light;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  --channel:#04384A;   /* deep water: text, bars */
+  --aqua:#00A3AD;      /* flag aquamarine: brand fills */
+  --gold:#FFC72C;      /* flag gold: selection, main actions */
+  --shallow:#E6F4F3;   /* shallow water: page */
+  --mangrove:#2F6B4F;  /* open now */
+  --conch:#F4A99B;     /* this week */
+  --bg:var(--shallow); --surface:#FFFFFF; --text:#04384A; --muted:#3F6470;
+  --line:#C5E2E0; --soft:#D4ECEA; --open:var(--mangrove); --closed:#A3412F;
+  --display:"Anybody",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#071A1F; --surface:#0F2A31; --text:#E8F5F4; --muted:#9DBABE;
-    --chip:#163A42; --line:#1F4952; --open:#5CD48E; --closed:#F08A75; color-scheme:dark;
+    --bg:#021E28; --surface:#06303D; --text:#E4F4F3; --muted:#9CC0C4;
+    --line:#124B59; --soft:#0B3F4D; --open:#6FD39C; --closed:#F39A86; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#071A1F; --surface:#0F2A31; --text:#E8F5F4; --muted:#9DBABE;
-  --chip:#163A42; --line:#1F4952; --open:#5CD48E; --closed:#F08A75; color-scheme:dark;
+  --bg:#021E28; --surface:#06303D; --text:#E4F4F3; --muted:#9CC0C4;
+  --line:#124B59; --soft:#0B3F4D; --open:#6FD39C; --closed:#F39A86; color-scheme:dark;
 }
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
-button{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:150px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-text-size-adjust:100%}
+img{display:block;max-width:100%}
+button,input{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.hero{background:var(--aqua);color:#fff;position:relative;overflow:hidden;padding:28px 24px 64px}
-.brand{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:20px}
-.sun{width:26px;height:26px;border-radius:50%;background:var(--gold)}
-.tagline{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:.92;letter-spacing:-.02em;margin:24px 0 0;font-size:clamp(44px,11vw,100px)}
-.tagline span{display:block}
-.tagline span:nth-child(2){color:var(--ink)}
-.tagline span:nth-child(3){color:var(--gold)}
-.hero p{max-width:36ch;margin:18px 0 0;font-size:18px}
-.wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:50px;display:block}
-.wave path{fill:var(--ink)}
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:min(78vh,640px);display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:var(--channel);overflow:hidden;padding-top:env(safe-area-inset-top,0px)}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,56,74,.35) 0%,rgba(4,56,74,0) 30%,rgba(4,56,74,.2) 50%,rgba(4,56,74,.92) 100%)}
+.hero-in{position:relative;z-index:1;width:100%;max-width:1160px;margin:0 auto;padding:24px 20px 28px}
+.brand{position:absolute;z-index:1;top:calc(env(safe-area-inset-top,0px) + 18px);left:20px;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:19px;font-stretch:120%}
+.brand i{width:22px;height:22px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(255,199,44,.3)}
+.hero h1{font-family:var(--display);font-weight:900;font-stretch:135%;font-size:clamp(40px,7vw,84px);line-height:.92;letter-spacing:-.025em;margin:0;max-width:11ch;text-wrap:balance}
+.hero p{margin:14px 0 20px;font-size:19px;max-width:34ch}
+.find{display:flex;align-items:center;gap:10px;background:#fff;color:var(--channel);border-radius:14px;padding:0 8px 0 16px;max-width:560px;min-height:58px}
+.find svg{flex:none}
+.find input{flex:1;border:0;background:transparent;min-height:56px;font-size:18px;outline:none;min-width:0;color:var(--channel)}
+.find input::placeholder{color:#5B7A83}
+.find:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.find .x{border:0;background:var(--soft);color:var(--channel);border-radius:10px;min-height:42px;padding:0 12px;cursor:pointer;font-weight:700}
+.find .x[hidden]{display:none}
+.credit-hero{position:absolute;z-index:1;right:12px;bottom:8px;font-size:12px;opacity:.75}
+.credit-hero a{text-decoration:none}
 
-.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--ink);display:flex;justify-content:center;gap:6px;padding:10px 12px;overflow-x:auto}
-.tab{background:transparent;border:0;color:#CFE7E5;font-weight:700;padding:10px 18px;border-radius:999px;min-height:48px;cursor:pointer;white-space:nowrap}
-.tab[aria-selected="true"]{background:var(--gold);color:var(--ink)}
+/* ---------- sticky bar: sections + island strip ---------- */
+.bar{position:sticky;top:0;z-index:15;background:var(--channel);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.bar-in{max-width:1160px;margin:0 auto;padding:0 12px}
+.sections{display:none}
+.strip{position:relative;padding:6px 0 4px}
+.strip-head{display:flex;justify-content:space-between;align-items:center;padding:0 6px 4px;font-size:14px;color:#BFE0E2}
+.whole{border:0;background:transparent;color:#fff;font-weight:700;padding:6px 10px;border-radius:999px;cursor:pointer;min-height:36px}
+.whole[aria-pressed="true"]{background:rgba(255,255,255,.14)}
+.stops{position:relative;display:grid;grid-template-columns:repeat(5,1fr);list-style:none;margin:0;padding:0}
+.stops-wrap{position:relative}
+.shore{position:absolute;left:0;right:0;top:9px;height:30px;width:100%;pointer-events:none}
+.shore path{fill:#0A5267}
+.shore line{stroke:var(--aqua);stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round}
+.stop{position:relative;width:100%;border:0;background:transparent;color:#D6ECEE;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 6px;min-height:60px;border-radius:12px}
+.stop .ct{display:none}
+.stop .dot{width:14px;height:14px;border-radius:50%;background:var(--channel);border:3px solid var(--aqua);margin-top:7px;transition:transform .15s ease}
+.stop .nm{font-family:var(--display);font-weight:700;font-stretch:75%;font-size:15px;line-height:1.05;text-align:center}
+.stop .ct{font-size:12px;color:#93C3C8}
+@media (min-width:860px){.stop .ct{display:block}.strip{padding:12px 0 10px}}
+.stop[aria-pressed="true"]{color:#fff}
+.stop[aria-pressed="true"] .dot{background:var(--gold);border-color:var(--gold);transform:scale(1.45)}
+.stop[aria-pressed="true"] .nm{font-weight:900;color:var(--gold)}
+.stop:disabled{opacity:.45;cursor:default}
 
-main{max-width:1100px;margin:0 auto;padding:8px 20px 40px}
+/* bottom nav on phones */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:16;background:var(--channel);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid #0E5568}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#BFE0E2;font-weight:700;font-size:14px;padding:6px 4px;border-radius:12px;min-height:54px;justify-content:center}
+.nav a b{font-family:var(--display);font-stretch:120%;font-size:17px;font-weight:800}
+.nav a small{font-size:12px;font-weight:400;opacity:.85}
+.nav a[aria-current="page"]{background:var(--gold);color:var(--channel)}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+
+@media (min-width:860px){
+  .nav{display:none}
+  body{padding-bottom:0}
+  .bar-in{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding:0 20px}
+  .sections{display:flex;gap:4px}
+  .sections a{text-decoration:none;color:#BFE0E2;font-weight:700;padding:10px 16px;border-radius:999px;min-height:46px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .sections a small{font-weight:400;opacity:.8}
+  .sections a[aria-current="page"]{background:var(--gold);color:var(--channel)}
+  .stop .nm{font-stretch:110%;font-size:16px}
+}
+@media (min-width:1100px){ .stop .nm{font-stretch:130%;font-size:17px} }
+
+/* ---------- main ---------- */
+main{max-width:1160px;margin:0 auto;padding:4px 20px 48px}
 .view[hidden]{display:none}
-h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:28px;margin:24px 0 10px;letter-spacing:-.01em}
-.lead{color:var(--muted);margin:-4px 0 14px;max-width:60ch}
+h2{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:clamp(28px,4.4vw,40px);line-height:1;letter-spacing:-.015em;margin:32px 0 6px}
+h2+.lead{margin-top:4px}
+.lead{color:var(--muted);margin:0 0 16px;max-width:58ch}
+.scope{color:var(--muted);font-size:15px;margin:0 0 14px;min-height:1.5em}
+.scope b{color:var(--text)}
 
-.today{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px}
-.ev{flex:0 0 auto;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:10px;padding:10px 14px;min-width:220px}
-.ev b{display:block}
-.ev small{color:var(--muted)}
+.week{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 14px;margin:0 -20px;padding-left:20px;padding-right:20px;scroll-snap-type:x mandatory}
+.ev{flex:0 0 auto;scroll-snap-align:start;background:var(--conch);color:#3A1610;border-radius:14px;padding:12px 16px;min-width:230px}
+.ev b{display:block;font-family:var(--display);font-stretch:115%;font-size:19px;font-weight:800;line-height:1.15}
+.ev span{display:block;font-size:15px}
 
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 18px}
-.chip{border:0;background:var(--chip);padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer;min-height:48px}
-.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--gold);color:var(--ink)}}
-:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--gold);color:var(--ink)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 16px;align-items:center}
+.chip{border:1.5px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;font-weight:700;cursor:pointer;min-height:46px;font-size:16px}
+.chip[aria-pressed="true"]{background:var(--channel);border-color:var(--channel);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--channel)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--channel)}}
+.toggle{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;min-height:46px;padding:0 6px;margin-left:auto}
+.toggle input{appearance:none;width:48px;height:28px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;margin:0;transition:background .15s}
+.toggle input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s}
+.toggle input:checked{background:var(--open)}
+.toggle input:checked::after{transform:translateX(20px)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;display:flex;flex-direction:column}
-.card .pic{height:110px;display:grid;place-items:center;font-size:52px}
-.card .body{padding:14px 16px 16px}
-.card h3{margin:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:21px;font-weight:800;line-height:1.15}
-.meta{color:var(--muted);font-size:15px;margin-top:2px}
-.tag{display:inline-block;margin-top:10px;margin-right:6px;font-size:14px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--chip)}
-.status{font-weight:700;font-size:15px;margin-top:8px}
-.status.on{color:var(--open)}
-.status.off{color:var(--closed)}
+/* things to do: photo cards */
+.spots{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px 18px}
+.spot{border:0;background:none;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px}
+.spot .ph{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--soft)}
+.spot .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.spot:hover .ph img{transform:scale(1.03)}
+.spot .where{position:absolute;left:10px;bottom:10px;background:rgba(4,56,74,.82);color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px}
+.spot h3{margin:0;font-family:var(--display);font-weight:800;font-stretch:110%;font-size:22px;line-height:1.1}
+.spot p{margin:2px 0 0;color:var(--muted);font-size:15px}
+@media (min-width:860px){
+  .spots .spot:first-child{grid-column:span 2}
+  .spots .spot:first-child .ph{aspect-ratio:16/9}
+  .spots .spot:first-child h3{font-size:28px}
+}
+@media (prefers-reduced-motion: reduce){.spot .ph img{transition:none}.spot:hover .ph img{transform:none}}
 
-.jobs{display:flex;flex-direction:column;gap:12px}
-.job{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;text-align:left;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:center}
-.job h3{margin:0;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:21px;font-weight:800}
-.job .when{color:var(--muted);font-size:14px;text-align:right}
-.search{width:100%;max-width:420px;min-height:50px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:0 14px;font:inherit;margin-bottom:12px}
-.empty{color:var(--muted);padding:20px 0}
+/* businesses + jobs: rows */
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.r{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.r .open{grid-column:1 / 3;display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;border:0;background:none;padding:0;text-align:left;cursor:pointer;border-radius:10px}
+.thumb{width:64px;height:64px;border-radius:12px;overflow:hidden;background:var(--soft);display:grid;place-items:center;font-size:30px}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.r h3{margin:0;font-family:var(--display);font-weight:800;font-stretch:105%;font-size:20px;line-height:1.15}
+.r .sub{color:var(--muted);font-size:15px}
+.st{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:15px}
+.st::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.st.on{color:var(--open)} .st.off{color:var(--closed)}
+.call{display:inline-flex;align-items:center;gap:6px;min-height:46px;padding:0 14px;border-radius:12px;background:var(--soft);text-decoration:none;font-weight:700}
+.tag{display:inline-block;font-size:13px;font-weight:700;padding:2px 9px;border-radius:6px;background:var(--soft);margin-right:6px}
+.posted{color:var(--muted);font-size:14px;text-align:right;white-space:nowrap}
+.r.job{grid-template-columns:1fr auto}
+.r.job .open{grid-column:1 / 2;grid-template-columns:1fr}
+.new{color:var(--mangrove);font-weight:700}
+:root[data-theme="dark"] .new{color:var(--open)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .new{color:var(--open)}}
 
-.take{margin-top:32px;display:flex;gap:20px;align-items:center;background:var(--ink);color:#fff;border-radius:16px;padding:20px;flex-wrap:wrap}
-.take h2{margin:0 0 4px;color:var(--gold)}
-.take p{margin:0;max-width:44ch}
-.qr{background:#fff;padding:10px;border-radius:10px;line-height:0}
-.qr img,.qr canvas{width:128px!important;height:128px!important}
+.empty{padding:28px 0;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:19px;margin-bottom:4px}
+.empty button{margin-top:12px}
 
-.scrim{position:fixed;inset:0;background:rgba(5,20,25,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
+/* take it with you (desktop / kiosk only) */
+.take{display:none}
+@media (min-width:860px) and (hover:hover){
+  .take{margin-top:48px;display:flex;gap:22px;align-items:center;background:var(--channel);color:#fff;border-radius:18px;padding:22px}
+  .take h2{margin:0 0 4px;color:var(--gold);font-size:28px}
+  .take p{margin:0;max-width:46ch;color:#D6ECEE}
+}
+.qr{background:#fff;padding:8px;border-radius:10px;line-height:0;flex:none}
+.qr img,.qr canvas{width:120px!important;height:120px!important}
+
+footer{max-width:1160px;margin:0 auto;padding:8px 20px 40px;color:var(--muted);font-size:14px}
+footer details{margin-top:8px}
+footer summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+footer ul{margin:4px 0 0;padding-left:18px}
+
+/* ---------- detail sheet ---------- */
+.scrim{position:fixed;inset:0;z-index:30;background:rgba(2,24,32,.6);display:none;align-items:flex-end;justify-content:center}
 .scrim.open{display:flex}
-.sheet{background:var(--surface);width:100%;max-width:640px;border-radius:20px 20px 0 0;max-height:90vh;overflow:auto;padding-bottom:env(safe-area-inset-bottom,0px);animation:up .25s ease-out}
-@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet{position:relative;background:var(--surface);width:100%;max-width:640px;max-height:92vh;border-radius:22px 22px 0 0;overflow:auto;display:flex;flex-direction:column;animation:rise .24s ease-out}
+@keyframes rise{from{transform:translateY(48px);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion: reduce){.sheet{animation:none}}
-.sheet .pic{height:150px;display:grid;place-items:center;font-size:80px}
-.sheet .in{padding:20px 22px 24px}
-.sheet h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:30px;margin:0;font-weight:800;line-height:1.05}
-.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:14px 0;font-size:16px}
+@media (min-width:860px){.scrim{align-items:center}.sheet{border-radius:22px;max-height:88vh}}
+.sheet .ph{position:relative;aspect-ratio:16/9;flex:none;background:var(--soft);overflow:hidden}
+.sheet .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sheet .ph small{position:absolute;right:8px;bottom:6px;font-size:12px;background:rgba(4,56,74,.75);color:#fff;padding:2px 8px;border-radius:6px}
+.sheet .ph small a{text-decoration:none}
+.shut{position:absolute;top:12px;right:12px;z-index:2;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--channel);font-size:24px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.sheet .in{padding:20px 22px 8px;flex:1}
+.sheet h3{font-family:var(--display);font-weight:900;font-stretch:115%;font-size:32px;line-height:1.02;margin:0 56px 6px 0}
+.sheet .in>p{margin:10px 0;max-width:60ch}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:16px 0;font-size:16px}
 .facts dt{color:var(--muted)}
-.facts dd{margin:0;font-weight:600}
-.hours{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 4px}
-.hours td{padding:4px 0;border-bottom:1px solid var(--line)}
-.hours td:last-child{text-align:right;font-weight:600}
-.hours tr.today td{color:var(--aqua);font-weight:800}
-.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 20px;border-radius:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer}
-.btn.go{background:var(--gold);color:var(--ink)}
-.btn.alt{background:var(--chip);color:var(--text)}
-.mini{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
-.mini .qr img,.mini .qr canvas{width:88px!important;height:88px!important}
-.note{margin-top:28px;font-size:14px;color:var(--muted)}
+.facts dd{margin:0;font-weight:700}
+.hours{width:100%;border-collapse:collapse;font-size:15px;margin:4px 0 8px}
+.hours td{padding:6px 0;border-bottom:1px solid var(--line)}
+.hours td:last-child{text-align:right;font-weight:700}
+.hours tr.now td{font-weight:700;color:var(--text);background:linear-gradient(90deg,rgba(255,199,44,.3),transparent)}
+.hours tr.now td:first-child{padding-left:8px}
+.qrline{display:none}
+@media (min-width:860px) and (hover:hover){
+  .qrline{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:14px;margin:8px 0 12px}
+  .qrline .qr img,.qrline .qr canvas{width:84px!important;height:84px!important}
+}
+.acts{position:sticky;bottom:0;display:flex;gap:10px;padding:12px 22px calc(14px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line)}
+.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 18px;border-radius:14px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-size:17px}
+.btn.go{background:var(--gold);color:var(--channel)}
+.btn.alt{background:var(--soft);color:var(--text)}
 </style>
 </head>
 <body>
+
 <header class="hero">
-  <div class="brand"><span class="sun" aria-hidden="true"></span>Island Explore</div>
-  <h1 class="tagline"><span>See more.</span><span>Do more.</span><span>Explore more.</span></h1>
-  <p>Things to do, local businesses and job openings across Grand Bahama, all in one place.</p>
-  <svg class="wave" viewBox="0 0 1200 50" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 200 0 400 52 600 26 C 800 0 1000 52 1200 26 L1200 50 L0 50 Z"/></svg>
+  <img id="heroImg" alt="" fetchpriority="high">
+  <div class="brand"><i aria-hidden="true"></i>Island Explore</div>
+  <div class="hero-in">
+    <h1>Grand Bahama, end to end.</h1>
+    <p>Places to go, shops that are open right now, and local jobs, from West End to the national park.</p>
+    <label class="find">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span class="sr">Search places, businesses and jobs</span>
+      <input id="q" type="search" placeholder="Try ‘beach’, ‘conch’ or ‘cook’" autocomplete="off" enterkeyhint="search">
+      <button class="x" id="qClear" type="button" hidden>Clear</button>
+    </label>
+  </div>
+  <small class="credit-hero" id="heroCredit"></small>
 </header>
 
-<nav class="tabs" role="tablist" aria-label="Sections">
-  <button class="tab" role="tab" data-v="explore">Things to do</button>
-  <button class="tab" role="tab" data-v="businesses">Local businesses</button>
-  <button class="tab" role="tab" data-v="jobs">Job openings</button>
-</nav>
+<div class="bar">
+  <div class="bar-in">
+    <nav class="sections" aria-label="Sections">
+      <a href="#do" data-v="do">Things to do <small data-n="do"></small></a>
+      <a href="#local" data-v="local">Shops and food <small data-n="local"></small></a>
+      <a href="#jobs" data-v="jobs">Jobs <small data-n="jobs"></small></a>
+    </nav>
+    <div class="strip" role="group" aria-label="Filter by part of the island">
+      <div class="strip-head"><span id="stripHint">Tap a part of the island</span><button class="whole" id="whole" aria-pressed="true">Whole island</button></div>
+      <div class="stops-wrap">
+        <svg class="shore" viewBox="0 0 1000 30" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 18 C 60 10 120 12 200 14 C 300 16 380 6 470 6 C 560 6 640 2 760 4 C 860 6 940 10 1000 14 L 1000 26 C 900 26 800 30 700 28 C 600 26 520 30 430 28 C 330 26 240 24 160 24 C 90 24 40 24 0 22 Z"/>
+          <line x1="100" y1="15" x2="900" y2="15"/>
+        </svg>
+        <ul class="stops" id="stops"></ul>
+      </div>
+    </div>
+  </div>
+</div>
 
 <main>
-  <section class="view" id="v-explore">
-    <h2>Happening this week</h2>
-    <div class="today" id="today"></div>
-    <h2>Things to do</h2>
-    <div class="chips" id="chipsX" role="group" aria-label="Filter things to do"></div>
-    <div class="grid" id="gridX"></div>
+  <section class="view" id="v-do" aria-labelledby="h-do">
+    <div id="weekWrap">
+      <h2>This week</h2>
+      <div class="week" id="week"></div>
+    </div>
+    <h2 id="h-do">Things to do</h2>
+    <p class="scope" id="scope-do" aria-live="polite"></p>
+    <div class="filters" id="fDo" role="group" aria-label="Type of place"></div>
+    <div class="spots" id="listDo"></div>
   </section>
 
-  <section class="view" id="v-businesses" hidden>
-    <h2>Local businesses</h2>
-    <p class="lead">Hours, location and contact for small businesses around the island. Green means open right now.</p>
-    <div class="chips" id="chipsB" role="group" aria-label="Filter businesses"></div>
-    <div class="grid" id="gridB"></div>
+  <section class="view" id="v-local" hidden aria-labelledby="h-local">
+    <h2 id="h-local">Shops and food</h2>
+    <p class="lead">Small businesses around the island, with today’s hours in Bahamas time.</p>
+    <p class="scope" id="scope-local" aria-live="polite"></p>
+    <div class="filters" id="fLocal" role="group" aria-label="Type of business"></div>
+    <div class="rows" id="listLocal"></div>
   </section>
 
-  <section class="view" id="v-jobs" hidden>
-    <h2>Job openings</h2>
-    <p class="lead">New openings from local employers. Tap a job to see how to apply.</p>
-    <input class="search" id="jobSearch" type="search" placeholder="Search jobs, like ‘cook’ or ‘Freeport’" aria-label="Search jobs">
-    <div class="chips" id="chipsJ" role="group" aria-label="Filter jobs"></div>
-    <div class="jobs" id="listJ"></div>
+  <section class="view" id="v-jobs" hidden aria-labelledby="h-jobs">
+    <h2 id="h-jobs">Jobs</h2>
+    <p class="lead">Openings from local employers, newest first. Tap a job to see how to apply.</p>
+    <p class="scope" id="scope-jobs" aria-live="polite"></p>
+    <div class="filters" id="fJobs" role="group" aria-label="Type of job"></div>
+    <div class="rows" id="listJobs"></div>
   </section>
 
   <section class="take">
     <div class="qr" id="qrMain"></div>
     <div>
       <h2>Take this with you</h2>
-      <p>Scan with your phone camera to open Island Explore on your phone. No app needed.</p>
+      <p>Point your phone camera at the code to open Island Explore on your phone. No app needed.</p>
     </div>
   </section>
-
-  <p class="note">Prototype by the Young Innovators Club. Businesses, jobs and phone numbers are made-up samples. Check details before visiting.</p>
 </main>
 
-<div class="scrim" id="scrim" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle" id="sheet"></div>
+<footer>
+  <p>A prototype by the Young Innovators Club. The businesses, jobs and phone numbers are made-up samples, so check details before you go. Places to visit are real.</p>
+  <details><summary>Photo credits</summary><ul id="credits"></ul></details>
+</footer>
+
+<nav class="nav" aria-label="Sections">
+  <a href="#do" data-v="do"><b>Do</b><small data-n="do"></small></a>
+  <a href="#local" data-v="local"><b>Shops</b><small data-n="local"></small></a>
+  <a href="#jobs" data-v="jobs"><b>Jobs</b><small data-n="jobs"></small></a>
+</nav>
+
+<div class="scrim" id="scrim">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle" id="sheet" tabindex="-1"></div>
 </div>
 
 <script>
-/* ---------- data ---------- */
-const XCATS = [
+/* ---------- photos (Wikimedia Commons, free licences) ---------- */
+const PHOTOS = {
+ "gold": {
+  "src": "img/gold.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Gold_Rock_Beach_in_Gold_Rock_Cove_The_Lucayan_National_Park_of_the_Bahamas_in_Grand_Bahama.jpg",
+  "by": "EgorovaSvetlana",
+  "lic": "CC BY-SA 4.0",
+  "title": "Gold Rock Beach"
+ },
+ "peterson": {
+  "src": "img/peterson.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Peterson_Cay_National_Park_with_Fringing_Coral_Reefs_view_from_Peterson_Beach_of_Grand_Bahama.jpg",
+  "by": "EgorovaSvetlana",
+  "lic": "CC BY-SA 4.0",
+  "title": "Peterson Cay"
+ },
+ "bens": {
+  "src": "img/bens.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Inland_Blue_Hole_Ben%E2%80%99s_Cave_Lucayan_National_Park_of_the_Bahamas_in_Grand_Bahama.jpg",
+  "by": "EgorovaSvetlana",
+  "lic": "CC BY-SA 4.0",
+  "title": "Ben’s Cave blue hole"
+ },
+ "taino": {
+  "src": "img/taino.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taino_Beach_-_panoramio_(5).jpg",
+  "by": "qwesy qwesy",
+  "lic": "CC BY 3.0",
+  "title": "Taino Beach"
+ },
+ "portlucaya": {
+  "src": "img/portlucaya.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Port_Lucaya_Marina_%5E_Marketplace_-_panoramio.jpg",
+  "by": "qwesy qwesy",
+  "lic": "CC BY 3.0",
+  "title": "Port Lucaya Marketplace"
+ },
+ "paradise": {
+  "src": "img/paradise.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Paradise_Cove_and_Deadman%E2%80%99s_Reef_Southwest_Coast_Grand_Bahama.jpg",
+  "by": "EgorovaSvetlana",
+  "lic": "CC BY-SA 4.0",
+  "title": "Paradise Cove"
+ },
+ "conch": {
+  "src": "img/conch.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Conch_salad_2022_1.jpg",
+  "by": "Hannah On The Go",
+  "lic": "CC BY 3.0",
+  "title": "Conch salad stand"
+ },
+ "conch2": {
+  "src": "img/conch2.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Conch_Salad.jpg",
+  "by": "Tjones242",
+  "lic": "CC BY-SA 4.0",
+  "title": "Conch salad"
+ }
+};
+
+/* ---------- island zones, west to east ---------- */
+const ZONES = [
+  {id:"west",  label:"West End"},
+  {id:"emr",   label:"Eight Mile Rock"},
+  {id:"fpo",   label:"Freeport"},
+  {id:"lucaya",label:"Lucaya"},
+  {id:"east",  label:"East and the park"}
+];
+
+/* ---------- things to do (real places) ---------- */
+const DO_CATS = [
   {id:"all",label:"Everything"},
-  {id:"beach",label:"Beaches",color:"#FFE7A3"},
-  {id:"nature",label:"Nature",color:"#BFE8C9"},
-  {id:"water",label:"Water fun",color:"#A9E4EA"},
-  {id:"food",label:"Food",color:"#F7C2B4"},
-  {id:"shop",label:"Shopping",color:"#E2D2F5"}
+  {id:"beach",label:"Beaches"},
+  {id:"nature",label:"Nature"},
+  {id:"water",label:"In the water"},
+  {id:"food",label:"Food"},
+  {id:"shop",label:"Shopping"}
 ];
 const SPOTS = [
-  {name:"Gold Rock Beach",cat:"beach",icon:"🏖️",area:"Lucayan National Park, east of Freeport",price:"Park entry fee",best:"Low tide for the sandbars",about:"A long, quiet beach where the tide pulls back to show wide sandbars. Bring water and shade."},
-  {name:"Taino Beach",cat:"beach",icon:"🌴",area:"Lucaya",price:"Free",best:"Afternoon",about:"Easy to reach from the Lucaya hotels, with calm water and beach bars nearby."},
-  {name:"Lucayan National Park caves",cat:"nature",icon:"🦇",area:"East of Freeport",price:"Park entry fee",best:"Morning",about:"Walk down into one of the world’s longest underwater cave systems, then cross the mangrove boardwalk."},
-  {name:"Garden of the Groves",cat:"nature",icon:"🌺",area:"Freeport",price:"Entry fee",best:"Morning or late afternoon",about:"Gardens, waterfalls, walking trails and a small hilltop chapel. Good for families."},
-  {name:"Peterson Cay",cat:"water",icon:"🐠",area:"Off the south shore, by boat",price:"Tour price",best:"Calm sea days",about:"A tiny island park with reef snorkeling. Reach it by boat or kayak tour."},
-  {name:"Dolphin and dive trips",cat:"water",icon:"🐬",area:"Port Lucaya",price:"Tour price",best:"Book a day ahead",about:"Diving, snorkeling and dolphin encounters run from Port Lucaya."},
-  {name:"Smith’s Point Fish Fry",cat:"food",icon:"🐟",area:"Smith’s Point",price:"$",best:"Wednesday night",about:"Fresh fried fish, conch and music with locals at the weekly fish fry."},
-  {name:"Port Lucaya Marketplace",cat:"shop",icon:"🛍️",area:"Port Lucaya",price:"Free to browse",best:"Evening for live music",about:"Shops, straw market, restaurants and live music around the harbour."},
-  {name:"Local conch stands",cat:"food",icon:"🐚",area:"Around the island",price:"$",best:"Lunch",about:"Try conch salad made fresh in front of you. Ask locals for their favourite stand."}
+  {name:"Gold Rock Beach",cat:"beach",zone:"east",photo:"gold",area:"Lucayan National Park",price:"Park entry fee",best:"Low tide, when the sandbars show",about:"A long, quiet beach where the tide pulls back to show wide sandbars. There’s no shade or shop, so bring water."},
+  {name:"Peterson Cay",cat:"water",zone:"east",photo:"peterson",area:"Off Barbary Beach, by boat or kayak",price:"Tour price",best:"Calm sea days",about:"A tiny island national park ringed by coral reef. Snorkel straight off the sand. Get there with a boat or kayak tour."},
+  {name:"Ben’s Cave and the blue holes",cat:"nature",zone:"east",photo:"bens",area:"Lucayan National Park",price:"Park entry fee",best:"Morning, before it gets hot",about:"Walk down wooden steps to a clear inland blue hole, part of one of the longest underwater cave systems in the world. Then cross the mangrove boardwalk to the beach."},
+  {name:"Taino Beach",cat:"beach",zone:"lucaya",photo:"taino",area:"Lucaya",price:"Free",best:"Afternoon",about:"Easy to reach from the Lucaya hotels, with calm water and beach bars nearby."},
+  {name:"Port Lucaya Marketplace",cat:"shop",zone:"lucaya",photo:"portlucaya",area:"Port Lucaya",price:"Free to walk around",best:"Evening, for live music",about:"Shops, a straw market, restaurants and live music around the marina."},
+  {name:"Dive and dolphin trips",cat:"water",zone:"lucaya",photo:"marina",area:"Port Lucaya marina",price:"Tour price",best:"Book a day ahead",about:"Diving, snorkel trips and dolphin encounters leave from the Port Lucaya marina."},
+  {name:"Smith’s Point Fish Fry",cat:"food",zone:"lucaya",photo:"fishfry",area:"Smith’s Point, next to Taino Beach",price:"$",best:"Wednesday night",about:"Fresh fried fish, conch and music with locals at the weekly fish fry."},
+  {name:"Garden of the Groves",cat:"nature",zone:"lucaya",photo:"groves",area:"Midshipman Road, east of Lucaya",price:"Entry fee",best:"Morning or late afternoon",about:"Gardens, waterfalls, walking trails and a small hilltop chapel. Good for families."},
+  {name:"Paradise Cove and Deadman’s Reef",cat:"water",zone:"emr",photo:"paradise",area:"Southwest coast, past Eight Mile Rock",price:"Small beach fee",best:"Calm mornings",about:"Snorkel from the beach out to a shallow reef full of fish. Snorkel gear can be rented on the beach."},
+  {name:"Conch salad stands",cat:"food",zone:null,photo:"conch",area:"Around the island",price:"$",best:"Lunch",about:"Conch salad made fresh in front of you with lime, peppers and onion. Ask locals for their favourite stand."}
 ];
 const EVENTS = [
-  {t:"Fish fry",w:"Smith’s Point",d:"Wednesday night"},
-  {t:"Live music",w:"Port Lucaya Marketplace",d:"Most evenings"},
-  {t:"Guided cave walk",w:"Lucayan National Park",d:"Ask at the park"}
+  {t:"Fish fry",w:"Smith’s Point",d:"Wednesday night",zone:"lucaya"},
+  {t:"Live music",w:"Port Lucaya Marketplace",d:"Most evenings",zone:"lucaya"},
+  {t:"Guided cave walk",w:"Lucayan National Park",d:"Ask at the park office",zone:"east"}
 ];
 
-const BCATS = [
+/* ---------- businesses (made-up samples) ---------- */
+const LOCAL_CATS = [
   {id:"all",label:"All"},
-  {id:"eat",label:"Food and drink",color:"#F7C2B4"},
-  {id:"shop",label:"Shops",color:"#E2D2F5"},
-  {id:"service",label:"Services",color:"#CFE0F7"},
-  {id:"tour",label:"Tours and rentals",color:"#A9E4EA"}
+  {id:"eat",label:"Food and drink"},
+  {id:"shop",label:"Shops"},
+  {id:"service",label:"Services"},
+  {id:"tour",label:"Tours and rentals"}
 ];
-/* days: 0=Sun ... 6=Sat. null = closed */
+/* hours by day, 0 = Sunday ... 6 = Saturday. null = closed */
 const wk = (o,c) => [null,[o,c],[o,c],[o,c],[o,c],[o,c],[o,c]];
 const BIZ = [
-  {name:"Sea Grape Café",cat:"eat",icon:"☕",area:"Downtown Freeport",phone:"242-555-0141",about:"Breakfast, johnnycake and fresh juice.",hours:[["8:00","14:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["8:00","15:00"]]},
-  {name:"Lucaya Conch Shack",cat:"eat",icon:"🐚",area:"Lucaya",phone:"242-555-0172",about:"Conch salad, fritters and cracked conch made to order.",hours:[null,["11:00","21:00"],["11:00","21:00"],["11:00","21:00"],["11:00","22:00"],["11:00","22:00"],["11:00","22:00"]]},
-  {name:"Island Threads",cat:"shop",icon:"👕",area:"Port Lucaya Marketplace",phone:"242-555-0118",about:"Local-made shirts, hats and gifts.",hours:[["12:00","18:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","20:00"],["10:00","20:00"]]},
-  {name:"Straw Works",cat:"shop",icon:"👜",area:"Port Lucaya Marketplace",phone:"242-555-0190",about:"Handwoven straw bags, baskets and hats.",hours:wk("9:00","17:00")},
-  {name:"Quick Fix Phone Repair",cat:"service",icon:"📱",area:"Freeport",phone:"242-555-0133",about:"Screen and battery repair, often same day.",hours:[null,["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["10:00","14:00"]]},
-  {name:"Eight Mile Rock Laundry",cat:"service",icon:"🧺",area:"Eight Mile Rock",phone:"242-555-0156",about:"Wash, dry and fold. Drop off in the morning, pick up by evening.",hours:[null,["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"]]},
-  {name:"Blue Hole Kayaks",cat:"tour",icon:"🛶",area:"Lucayan National Park area",phone:"242-555-0164",about:"Kayak rentals and guided mangrove trips.",hours:[["9:00","16:00"],null,["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"]]},
-  {name:"West End Scooter Rental",cat:"tour",icon:"🛵",area:"West End",phone:"242-555-0127",about:"Scooter and bike rentals by the day.",hours:wk("8:00","18:00")}
+  {name:"Sea Grape Café",cat:"eat",zone:"fpo",icon:"☕",area:"Downtown Freeport",phone:"242-555-0141",about:"Breakfast, johnnycake and fresh juice.",hours:[["8:00","14:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["8:00","15:00"]]},
+  {name:"Lucaya Conch Shack",cat:"eat",zone:"lucaya",photo:"conch2",area:"Lucaya",phone:"242-555-0172",about:"Conch salad, fritters and cracked conch made to order.",hours:[null,["11:00","21:00"],["11:00","21:00"],["11:00","21:00"],["11:00","22:00"],["11:00","22:00"],["11:00","22:00"]]},
+  {name:"Island Threads",cat:"shop",zone:"lucaya",icon:"👕",area:"Port Lucaya Marketplace",phone:"242-555-0118",about:"Local-made shirts, hats and gifts.",hours:[["12:00","18:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","20:00"],["10:00","20:00"]]},
+  {name:"Straw Works",cat:"shop",zone:"lucaya",icon:"👜",area:"Port Lucaya Marketplace",phone:"242-555-0190",about:"Handwoven straw bags, baskets and hats.",hours:wk("9:00","17:00")},
+  {name:"Quick Fix Phone Repair",cat:"service",zone:"fpo",icon:"📱",area:"Freeport",phone:"242-555-0133",about:"Screen and battery repair, often the same day.",hours:[null,["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["10:00","14:00"]]},
+  {name:"Eight Mile Rock Laundry",cat:"service",zone:"emr",icon:"🧺",area:"Eight Mile Rock",phone:"242-555-0156",about:"Wash, dry and fold. Drop off in the morning, pick up by evening.",hours:[null,["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"]]},
+  {name:"Blue Hole Kayaks",cat:"tour",zone:"east",icon:"🛶",area:"Near Lucayan National Park",phone:"242-555-0164",about:"Kayak rentals and guided mangrove trips.",hours:[["9:00","16:00"],null,["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"]]},
+  {name:"West End Scooter Rental",cat:"tour",zone:"west",icon:"🛵",area:"West End",phone:"242-555-0127",about:"Scooter and bike rentals by the day.",hours:wk("8:00","18:00")}
 ];
 
-const JCATS = [
+/* ---------- jobs (made-up samples) ---------- */
+const JOB_CATS = [
   {id:"all",label:"All jobs"},
   {id:"hosp",label:"Hotels and food"},
   {id:"retail",label:"Retail"},
@@ -222,148 +437,283 @@ const JCATS = [
   {id:"office",label:"Office"}
 ];
 const JOBS = [
-  {title:"Line cook",cat:"hosp",employer:"Lucaya Conch Shack",area:"Lucaya",type:"Full-time",posted:2,about:"Prep and cook seafood dishes. Experience helps but we will train.",apply:"Call 242-555-0172 or drop in after 3 pm"},
-  {title:"Front desk agent",cat:"hosp",employer:"Harbour View Inn",area:"Port Lucaya",type:"Full-time",posted:5,about:"Check guests in and out, answer calls, help with tour bookings.",apply:"Email jobs@example.com with your CV"},
-  {title:"Server, weekends",cat:"hosp",employer:"Sea Grape Café",area:"Downtown Freeport",type:"Part-time",posted:1,about:"Take orders and serve breakfast and lunch on Saturdays and Sundays.",apply:"Call 242-555-0141"},
-  {title:"Sales assistant",cat:"retail",employer:"Island Threads",area:"Port Lucaya Marketplace",type:"Part-time",posted:3,about:"Help customers, restock shelves, run the till.",apply:"Drop off your CV in store"},
-  {title:"Cashier",cat:"retail",employer:"Eastside Grocery",area:"Freeport",type:"Full-time",posted:7,about:"Run the till and help with stock. Early morning shifts.",apply:"Apply in person at the service desk"},
-  {title:"Electrician’s helper",cat:"trades",employer:"Bright Spark Electrical",area:"Freeport",type:"Full-time",posted:4,about:"Assist licensed electricians on homes and shops. Must have own transport.",apply:"Call 242-555-0109"},
-  {title:"Phone repair trainee",cat:"trades",employer:"Quick Fix Phone Repair",area:"Freeport",type:"Part-time",posted:6,about:"Learn to fix screens and batteries. Good with small tools.",apply:"Call 242-555-0133"},
-  {title:"Office assistant",cat:"office",employer:"Coral Insurance Agency",area:"Downtown Freeport",type:"Full-time",posted:9,about:"Filing, phones and customer emails. Basic computer skills needed.",apply:"Email office@example.com"}
+  {title:"Line cook",cat:"hosp",zone:"lucaya",employer:"Lucaya Conch Shack",area:"Lucaya",type:"Full-time",posted:2,about:"Prep and cook seafood dishes. Experience helps, but we will train you.",apply:"Call 242-555-0172 or drop in after 3 pm",phone:"242-555-0172"},
+  {title:"Front desk agent",cat:"hosp",zone:"lucaya",employer:"Harbour View Inn",area:"Port Lucaya",type:"Full-time",posted:5,about:"Check guests in and out, answer calls and help with tour bookings.",apply:"Email your CV to jobs@example.com",email:"jobs@example.com"},
+  {title:"Weekend server",cat:"hosp",zone:"fpo",employer:"Sea Grape Café",area:"Downtown Freeport",type:"Part-time",posted:1,about:"Take orders and serve breakfast and lunch on Saturdays and Sundays.",apply:"Call 242-555-0141",phone:"242-555-0141"},
+  {title:"Sales assistant",cat:"retail",zone:"lucaya",employer:"Island Threads",area:"Port Lucaya Marketplace",type:"Part-time",posted:3,about:"Help customers, restock shelves and run the till.",apply:"Bring your CV to the shop"},
+  {title:"Cashier",cat:"retail",zone:"fpo",employer:"Eastside Grocery",area:"Freeport",type:"Full-time",posted:7,about:"Run the till and help with stock. Early morning shifts.",apply:"Apply in person at the service desk"},
+  {title:"Electrician’s helper",cat:"trades",zone:"fpo",employer:"Bright Spark Electrical",area:"Freeport",type:"Full-time",posted:4,about:"Assist licensed electricians on homes and shops. You need your own transport.",apply:"Call 242-555-0109",phone:"242-555-0109"},
+  {title:"Phone repair trainee",cat:"trades",zone:"fpo",employer:"Quick Fix Phone Repair",area:"Freeport",type:"Part-time",posted:6,about:"Learn to fix screens and batteries. Good for someone handy with small tools.",apply:"Call 242-555-0133",phone:"242-555-0133"},
+  {title:"Scooter rental attendant",cat:"retail",zone:"west",employer:"West End Scooter Rental",area:"West End",type:"Seasonal",posted:2,about:"Check scooters in and out, take payments and give safety briefings.",apply:"Call 242-555-0127",phone:"242-555-0127"},
+  {title:"Office assistant",cat:"office",zone:"fpo",employer:"Coral Insurance Agency",area:"Downtown Freeport",type:"Full-time",posted:9,about:"Filing, phones and customer emails. Basic computer skills needed.",apply:"Email office@example.com",email:"office@example.com"}
 ];
 
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const zoneLabel = id => (ZONES.find(z => z.id===id) || {label:"Around the island"}).label;
 const mapUrl = (name, area) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name + ", " + area + ", Grand Bahama");
 const mins = t => { const [h,m] = t.split(":").map(Number); return h*60+m; };
 function fmt(t){ let [h,m] = t.split(":").map(Number); const ap = h>=12?"pm":"am"; h = h%12||12; return m ? `${h}:${String(m).padStart(2,"0")} ${ap}` : `${h} ${ap}`; }
-function openNow(b){
-  const d = new Date(), h = b.hours[d.getDay()];
-  if (!h) return {on:false, text:"Closed today"};
-  const n = d.getHours()*60+d.getMinutes();
-  if (n >= mins(h[0]) && n < mins(h[1])) return {on:true, text:"Open now, closes " + fmt(h[1])};
-  if (n < mins(h[0])) return {on:false, text:"Closed, opens " + fmt(h[0])};
-  return {on:false, text:"Closed for today"};
+
+/* time on Grand Bahama, whatever the visitor's phone is set to */
+function islandNow(){
+  try{
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/Nassau",weekday:"short",hour:"numeric",minute:"numeric",hourCycle:"h23"}).formatToParts(new Date()).map(x => [x.type,x.value]));
+    return {day:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(p.weekday), m:(+p.hour%24)*60 + +p.minute};
+  }catch(e){ const d = new Date(); return {day:d.getDay(), m:d.getHours()*60+d.getMinutes()}; }
 }
-const postedText = d => d===1 ? "Posted yesterday" : `Posted ${d} days ago`;
+function status(b){
+  const {day, m} = islandNow(), h = b.hours[day];
+  if (h && m >= mins(h[0]) && m < mins(h[1])) {
+    const left = mins(h[1]) - m;
+    return {on:true, text: left <= 60 ? `Open, closes soon at ${fmt(h[1])}` : `Open until ${fmt(h[1])}`};
+  }
+  if (h && m < mins(h[0])) return {on:false, text:`Closed, opens at ${fmt(h[0])}`};
+  for (let i=1; i<=7; i++){
+    const d = (day+i)%7, n = b.hours[d];
+    if (n) return {on:false, text:`Closed, opens ${i===1?"tomorrow":DAYS[d]} at ${fmt(n[0])}`};
+  }
+  return {on:false, text:"Closed"};
+}
+const posted = d => d<=1 ? "Posted yesterday" : `Posted ${d} days ago`;
+function photoTag(key, decorative){
+  const p = PHOTOS[key]; if (!p) return "";
+  return `<img src="${p.src}" alt="${decorative ? "" : esc(p.title)}" loading="lazy" decoding="async">`;
+}
+function creditTag(key){
+  const p = PHOTOS[key]; if (!p) return "";
+  return `Photo: <a href="${p.page}" target="_blank" rel="noopener">${esc(p.by)}, ${esc(p.lic)}</a>`;
+}
 function makeQR(el, text, size){
   el.innerHTML = "";
-  if (window.QRCode) new QRCode(el,{text,width:size,height:size,colorDark:"#0A1F26",colorLight:"#ffffff"});
-  else el.textContent = "QR unavailable";
-}
-function chips(el, cats, current){
-  el.innerHTML = cats.map(c => `<button class="chip" aria-pressed="${c.id===current}" data-c="${c.id}">${c.label}</button>`).join("");
+  if (window.QRCode) new QRCode(el,{text,width:size,height:size,colorDark:"#04384A",colorLight:"#ffffff"});
+  else el.textContent = "QR code unavailable";
 }
 
-/* ---------- things to do ---------- */
-let curX = "all";
-$("#today").innerHTML = EVENTS.map(e => `<div class="ev"><b>${e.t}</b>${e.w}<br><small>${e.d}</small></div>`).join("");
-function renderX(){
-  chips($("#chipsX"), XCATS, curX);
-  $("#gridX").innerHTML = SPOTS.map((s,i)=>[s,i]).filter(([s]) => curX==="all"||s.cat===curX).map(([s,i]) => {
-    const c = XCATS.find(c=>c.id===s.cat);
-    return `<button class="card" data-x="${i}"><div class="pic" style="background:${c.color}" aria-hidden="true">${s.icon}</div>
-      <div class="body"><h3>${s.name}</h3><div class="meta">${s.area}</div><span class="tag">${c.label}</span></div></button>`;
+/* ---------- state ---------- */
+const S = {view:"do", zone:null, q:"", cat:{do:"all", local:"all", jobs:"all"}, openOnly:false};
+const words = () => S.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+const hit = (text) => { const w = words(); if (!w.length) return true; const t = text.toLowerCase(); return w.every(x => t.includes(x)); };
+const inZone = it => !S.zone || it.zone === S.zone || it.zone === null;
+
+const SOURCES = {
+  do:    {items:SPOTS, cats:DO_CATS,    text:s => [s.name,s.area,s.about,DO_CATS.find(c=>c.id===s.cat).label].join(" ")},
+  local: {items:BIZ,   cats:LOCAL_CATS, text:b => [b.name,b.area,b.about,LOCAL_CATS.find(c=>c.id===b.cat).label].join(" ")},
+  jobs:  {items:JOBS,  cats:JOB_CATS,   text:j => [j.title,j.employer,j.area,j.type,j.about,JOB_CATS.find(c=>c.id===j.cat).label].join(" ")}
+};
+function matches(view, {ignoreZone=false, ignoreCat=false} = {}){
+  const src = SOURCES[view];
+  return src.items.map((it,i) => [it,i]).filter(([it]) =>
+    (ignoreZone || inZone(it)) &&
+    (ignoreCat || S.cat[view]==="all" || it.cat===S.cat[view]) &&
+    hit(src.text(it)) &&
+    (view!=="local" || !S.openOnly || status(it).on)
+  );
+}
+
+/* ---------- island strip ---------- */
+function renderStrip(){
+  $("#stops").innerHTML = ZONES.map(z => {
+    const n = matches(S.view,{ignoreZone:true}).filter(([it]) => it.zone===z.id || it.zone===null).length;
+    return `<li><button class="stop" data-z="${z.id}" aria-pressed="${S.zone===z.id}" aria-label="${z.label}, ${n} ${n===1?"result":"results"}">
+      <span class="dot" aria-hidden="true"></span><span class="nm">${z.label}</span><span class="ct" aria-hidden="true">${n}</span></button></li>`;
   }).join("");
+  $("#whole").setAttribute("aria-pressed", !S.zone);
+  $("#stripHint").textContent = S.zone ? `Showing ${zoneLabel(S.zone)}` : "Tap a part of the island";
 }
-$("#chipsX").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curX=b.dataset.c; renderX();} });
+$("#stops").addEventListener("click", e => {
+  const b = e.target.closest(".stop"); if (!b) return;
+  S.zone = S.zone===b.dataset.z ? null : b.dataset.z; renderAll();
+});
+$("#whole").addEventListener("click", () => { S.zone = null; renderAll(); });
 
-/* ---------- businesses ---------- */
-let curB = "all";
-function renderB(){
-  chips($("#chipsB"), BCATS, curB);
-  $("#gridB").innerHTML = BIZ.map((b,i)=>[b,i]).filter(([b]) => curB==="all"||b.cat===curB).map(([b,i]) => {
-    const c = BCATS.find(c=>c.id===b.cat), st = openNow(b);
-    return `<button class="card" data-b="${i}"><div class="pic" style="background:${c.color}" aria-hidden="true">${b.icon}</div>
-      <div class="body"><h3>${b.name}</h3><div class="meta">${b.area}</div>
-      <div class="status ${st.on?"on":"off"}">${st.text}</div><span class="tag">${c.label}</span></div></button>`;
-  }).join("");
+/* ---------- filters ---------- */
+function renderChips(view, el){
+  const cats = SOURCES[view].cats;
+  let html = cats.map(c => `<button class="chip" aria-pressed="${S.cat[view]===c.id}" data-c="${c.id}">${c.label}</button>`).join("");
+  if (view==="local") html += `<label class="toggle"><input type="checkbox" id="openOnly" ${S.openOnly?"checked":""}>Open now</label>`;
+  el.innerHTML = html;
 }
-$("#chipsB").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curB=b.dataset.c; renderB();} });
+[["do","#fDo"],["local","#fLocal"],["jobs","#fJobs"]].forEach(([v,sel]) => {
+  $(sel).addEventListener("click", e => { const b = e.target.closest(".chip"); if (b){ S.cat[v] = b.dataset.c; renderAll(); } });
+});
+document.addEventListener("change", e => { if (e.target.id==="openOnly"){ S.openOnly = e.target.checked; renderAll(); } });
 
-/* ---------- jobs ---------- */
-let curJ = "all";
-function renderJ(){
-  chips($("#chipsJ"), JCATS, curJ);
-  const q = $("#jobSearch").value.trim().toLowerCase();
-  const list = JOBS.map((j,i)=>[j,i])
-    .filter(([j]) => curJ==="all"||j.cat===curJ)
-    .filter(([j]) => !q || [j.title,j.employer,j.area,j.type].join(" ").toLowerCase().includes(q))
-    .sort((a,b) => a[0].posted - b[0].posted);
-  $("#listJ").innerHTML = list.length ? list.map(([j,i]) => `
-    <button class="job" data-j="${i}">
-      <div><h3>${j.title}</h3><div class="meta">${j.employer}, ${j.area}</div><span class="tag">${j.type}</span></div>
-      <div class="when">${postedText(j.posted)}</div>
-    </button>`).join("") : `<p class="empty">No jobs match that search. Try a different word or tap All jobs.</p>`;
+function scopeLine(view, n){
+  const bits = [];
+  if (S.q.trim()) bits.push(`matching <b>“${esc(S.q.trim())}”</b>`);
+  if (S.zone) bits.push(`in <b>${zoneLabel(S.zone)}</b>`);
+  if (view==="local" && S.openOnly) bits.push(`<b>open now</b>`);
+  const noun = {do:["place","places"], local:["business","businesses"], jobs:["job","jobs"]}[view][n===1?0:1];
+  return bits.length ? `${n} ${noun} ${bits.join(", ")}` : "";
 }
-$("#chipsJ").addEventListener("click", e => { const b=e.target.closest(".chip"); if(b){curJ=b.dataset.c; renderJ();} });
-$("#jobSearch").addEventListener("input", renderJ);
+function emptyState(view){
+  const what = {do:"places", local:"businesses", jobs:"jobs"}[view];
+  const where = S.zone ? ` in ${zoneLabel(S.zone)}` : "";
+  const tips = [];
+  if (S.zone) tips.push(`<button class="chip" data-reset="zone">Show the whole island</button>`);
+  if (S.q.trim()) tips.push(`<button class="chip" data-reset="q">Clear the search</button>`);
+  if (S.cat[view]!=="all") tips.push(`<button class="chip" data-reset="cat">Show all types</button>`);
+  if (view==="local" && S.openOnly) tips.push(`<button class="chip" data-reset="open">Include closed businesses</button>`);
+  return `<div class="empty"><b>No ${what}${where} match these filters.</b>Widen the search to see more.<div class="filters">${tips.join("")}</div></div>`;
+}
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-reset]"); if (!r) return;
+  ({zone:()=>S.zone=null, q:()=>setQuery(""), cat:()=>S.cat[S.view]="all", open:()=>S.openOnly=false})[r.dataset.reset]();
+  renderAll();
+});
+
+/* ---------- lists ---------- */
+function renderDo(){
+  renderChips("do", $("#fDo"));
+  const evs = EVENTS.filter(e => inZone(e) && hit([e.t,e.w,e.d].join(" ")));
+  $("#weekWrap").hidden = !evs.length;
+  $("#week").innerHTML = evs.map(e => `<div class="ev"><b>${e.t}</b><span>${e.w}</span><span>${e.d}</span></div>`).join("");
+  const list = matches("do");
+  $("#scope-do").innerHTML = scopeLine("do", list.length);
+  $("#listDo").innerHTML = list.length ? list.map(([s,i]) => `
+    <button class="spot" data-open="do" data-i="${i}">
+      <div class="ph">${photoTag(s.photo, true)}<span class="where">${s.zone?zoneLabel(s.zone):"All over"}</span></div>
+      <div><h3>${s.name}</h3><p>${s.area}. Best: ${s.best.charAt(0).toLowerCase()+s.best.slice(1)}.</p></div>
+    </button>`).join("") : emptyState("do");
+}
+function renderLocal(){
+  renderChips("local", $("#fLocal"));
+  const list = matches("local");
+  $("#scope-local").innerHTML = scopeLine("local", list.length);
+  $("#listLocal").innerHTML = list.length ? list.map(([b,i]) => { const st = status(b); return `
+    <div class="r">
+      <button class="open" data-open="local" data-i="${i}">
+        <span class="thumb" aria-hidden="true">${b.photo ? photoTag(b.photo, true) : b.icon}</span>
+        <span><h3>${b.name}</h3><span class="sub">${b.area}</span><br><span class="st ${st.on?"on":"off"}">${st.text}</span></span>
+      </button>
+      <a class="call" href="tel:${b.phone}" aria-label="Call ${esc(b.name)}">Call</a>
+    </div>`; }).join("") : emptyState("local");
+}
+function renderJobs(){
+  renderChips("jobs", $("#fJobs"));
+  const list = matches("jobs").sort((a,b) => a[0].posted - b[0].posted);
+  $("#scope-jobs").innerHTML = scopeLine("jobs", list.length);
+  $("#listJobs").innerHTML = list.length ? list.map(([j,i]) => `
+    <div class="r job">
+      <button class="open" data-open="jobs" data-i="${i}">
+        <span><h3>${j.title}</h3><span class="sub">${j.employer}, ${j.area}</span><br><span class="tag">${j.type}</span></span>
+      </button>
+      <span class="posted ${j.posted<=2?"new":""}">${posted(j.posted)}</span>
+    </div>`).join("") : emptyState("jobs");
+}
+function renderCounts(){
+  Object.keys(SOURCES).forEach(v => {
+    const n = matches(v).length;
+    $$(`[data-n="${v}"]`).forEach(el => el.textContent = n);
+  });
+}
+function renderAll(){ renderStrip(); renderDo(); renderLocal(); renderJobs(); renderCounts(); }
+
+/* ---------- search ---------- */
+function setQuery(v){ S.q = v; $("#q").value = v; $("#qClear").hidden = !v; }
+$("#q").addEventListener("input", e => { setQuery(e.target.value); renderAll(); });
+$("#q").addEventListener("keydown", e => {
+  if (e.key!=="Enter") return;
+  /* jump to the section with results */
+  if (!matches(S.view).length){ const v = ["do","local","jobs"].find(v => matches(v).length); if (v) location.hash = v; }
+  document.querySelector(".bar").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+});
+$("#qClear").addEventListener("click", () => { setQuery(""); renderAll(); $("#q").focus(); });
 
 /* ---------- detail sheet ---------- */
 let lastFocus = null;
-function showSheet(html, qrText, qrLabel){
+function openSheet(html){
   lastFocus = document.activeElement;
-  $("#sheet").innerHTML = html + `<div class="row mini"><div class="qr" id="qrSpot"></div><span>${qrLabel}</span></div>
-    <div class="row"><button class="btn alt" id="closeBtn">Back to list</button></div></div>`;
-  makeQR($("#qrSpot"), qrText, 88);
-  $("#scrim").classList.add("open"); $("#scrim").setAttribute("aria-hidden","false");
-  $("#closeBtn").focus();
+  $("#sheet").innerHTML = `<button class="shut" id="shut" aria-label="Close">×</button>` + html;
+  $("#scrim").classList.add("open");
+  document.body.style.overflow = "hidden";
+  const q = $("#sheetQR"); if (q) makeQR(q, q.dataset.url, 84);
+  $("#shut").focus();
 }
 function closeSheet(){
-  $("#scrim").classList.remove("open"); $("#scrim").setAttribute("aria-hidden","true");
+  if (!$("#scrim").classList.contains("open")) return;
+  $("#scrim").classList.remove("open");
+  document.body.style.overflow = "";
   if (lastFocus) lastFocus.focus();
 }
-function openX(i){
-  const s = SPOTS[i], c = XCATS.find(c=>c.id===s.cat), url = mapUrl(s.name, s.area);
-  showSheet(`<div class="pic" style="background:${c.color}" aria-hidden="true">${s.icon}</div><div class="in">
+function hero(key){
+  return PHOTOS[key] ? `<div class="ph">${photoTag(key)}<small>${creditTag(key)}</small></div>` : "";
+}
+function qrLine(url, label){ return `<div class="qrline"><div class="qr" id="sheetQR" data-url="${esc(url)}"></div><span>${label}</span></div>`; }
+
+function showDo(i){
+  const s = SPOTS[i], url = mapUrl(s.name, s.area);
+  openSheet(`${hero(s.photo)}<div class="in">
     <h3 id="dTitle">${s.name}</h3><p>${s.about}</p>
     <dl class="facts"><dt>Where</dt><dd>${s.area}</dd><dt>Cost</dt><dd>${s.price}</dd><dt>Best time</dt><dd>${s.best}</dd></dl>
-    <div class="row"><a class="btn go" href="${url}" target="_blank" rel="noopener">Get directions</a></div>`,
-    url, "Scan to open directions on your phone");
+    ${qrLine(url, "Scan to get directions on your phone")}</div>
+    <div class="acts"><a class="btn go" href="${url}" target="_blank" rel="noopener">Get directions</a></div>`);
 }
-function openB(i){
-  const b = BIZ[i], c = BCATS.find(c=>c.id===b.cat), st = openNow(b), url = mapUrl(b.name, b.area), today = new Date().getDay();
-  const rows = [1,2,3,4,5,6,0].map(d => `<tr class="${d===today?"today":""}"><td>${DAYS[d]}</td><td>${b.hours[d]?fmt(b.hours[d][0])+" to "+fmt(b.hours[d][1]):"Closed"}</td></tr>`).join("");
-  showSheet(`<div class="pic" style="background:${c.color}" aria-hidden="true">${b.icon}</div><div class="in">
-    <h3 id="dTitle">${b.name}</h3><p>${b.about}</p>
-    <div class="status ${st.on?"on":"off"}">${st.text}</div>
+function showLocal(i){
+  const b = BIZ[i], st = status(b), url = mapUrl(b.name, b.area), today = islandNow().day;
+  const rows = [1,2,3,4,5,6,0].map(d => `<tr class="${d===today?"now":""}"><td>${DAYS[d]}${d===today?" (today)":""}</td><td>${b.hours[d]?fmt(b.hours[d][0])+" to "+fmt(b.hours[d][1]):"Closed"}</td></tr>`).join("");
+  openSheet(`${hero(b.photo)}<div class="in">
+    <h3 id="dTitle">${b.name}</h3>
+    <span class="st ${st.on?"on":"off"}">${st.text}</span>
+    <p>${b.about}</p>
     <dl class="facts"><dt>Location</dt><dd>${b.area}</dd><dt>Phone</dt><dd>${b.phone}</dd></dl>
-    <table class="hours" aria-label="Opening hours"><tbody>${rows}</tbody></table>
-    <div class="row"><a class="btn go" href="${url}" target="_blank" rel="noopener">Get directions</a><a class="btn alt" href="tel:${b.phone}">Call</a></div>`,
-    url, "Scan to open directions on your phone");
+    <table class="hours"><caption class="sr">Opening hours, Bahamas time</caption><tbody>${rows}</tbody></table>
+    ${qrLine(url, "Scan to get directions on your phone")}</div>
+    <div class="acts"><a class="btn go" href="tel:${b.phone}">Call now</a><a class="btn alt" href="${url}" target="_blank" rel="noopener">Directions</a></div>`);
 }
-function openJ(i){
+function showJob(i){
   const j = JOBS[i];
-  showSheet(`<div class="in"><h3 id="dTitle">${j.title}</h3>
-    <div class="meta">${j.employer}, ${j.area}</div><span class="tag">${j.type}</span>
+  const act = j.phone ? `<a class="btn go" href="tel:${j.phone}">Call to apply</a>`
+            : j.email ? `<a class="btn go" href="mailto:${j.email}?subject=${encodeURIComponent("Application: "+j.title)}">Email your CV</a>`
+            : `<a class="btn go" href="${mapUrl(j.employer, j.area)}" target="_blank" rel="noopener">Directions to apply</a>`;
+  openSheet(`<div class="in">
+    <h3 id="dTitle">${j.title}</h3>
+    <div class="sub">${j.employer}, ${j.area}</div><span class="tag">${j.type}</span><span class="posted ${j.posted<=2?"new":""}">${posted(j.posted)}</span>
     <p>${j.about}</p>
-    <dl class="facts"><dt>How to apply</dt><dd>${j.apply}</dd><dt>Listed</dt><dd>${postedText(j.posted)}</dd></dl>`,
-    location.href.split("#")[0] + "#jobs", "Scan to see all jobs on your phone");
+    <dl class="facts"><dt>How to apply</dt><dd>${j.apply}</dd></dl>
+    ${qrLine(location.href.split("#")[0]+"#jobs", "Scan to see all jobs on your phone")}</div>
+    <div class="acts">${act}</div>`);
 }
 document.addEventListener("click", e => {
-  const x = e.target.closest("[data-x]"), b = e.target.closest("[data-b]"), j = e.target.closest("[data-j]");
-  if (x) openX(+x.dataset.x); else if (b) openB(+b.dataset.b); else if (j) openJ(+j.dataset.j);
+  const o = e.target.closest("[data-open]"); if (!o) return;
+  ({do:showDo, local:showLocal, jobs:showJob})[o.dataset.open](+o.dataset.i);
 });
-$("#scrim").addEventListener("click", e => { if (e.target.id==="scrim" || e.target.id==="closeBtn") closeSheet(); });
-document.addEventListener("keydown", e => { if (e.key==="Escape") closeSheet(); });
+$("#scrim").addEventListener("click", e => { if (e.target.id==="scrim" || e.target.closest("#shut")) closeSheet(); });
+document.addEventListener("keydown", e => {
+  if (!$("#scrim").classList.contains("open")) return;
+  if (e.key==="Escape") return closeSheet();
+  if (e.key==="Tab"){ /* keep focus inside the sheet */
+    const f = $$("#sheet a[href], #sheet button");
+    const first = f[0], last = f[f.length-1];
+    if (e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+});
 
-/* ---------- tabs via #hash ---------- */
-const VIEWS = ["explore","businesses","jobs"];
+/* ---------- sections via #hash ---------- */
+const VIEWS = ["do","local","jobs"];
 function show(){
-  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "explore";
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "do";
+  S.view = v;
   VIEWS.forEach(n => { $("#v-"+n).hidden = n!==v; });
-  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.v===v));
+  $$("[data-v]").forEach(a => a.dataset.v===v ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+  renderStrip();
 }
-document.querySelector(".tabs").addEventListener("click", e => {
-  const t = e.target.closest(".tab"); if (!t) return;
-  if (location.hash !== "#"+t.dataset.v) location.hash = t.dataset.v; else show();
-});
-window.addEventListener("hashchange", show);
+window.addEventListener("hashchange", () => { show(); const bar = document.querySelector(".bar"); if (bar.getBoundingClientRect().top <= 0) window.scrollTo({top: bar.offsetTop}); });
 
-renderX(); renderB(); renderJ(); show();
-makeQR($("#qrMain"), location.href.split("#")[0], 128);
-setInterval(renderB, 60000);
+/* ---------- start ---------- */
+(function init(){
+  if (PHOTOS.gold){ $("#heroImg").src = PHOTOS.gold.src; $("#heroImg").alt = "Gold Rock Beach at low tide"; $("#heroCredit").innerHTML = creditTag("gold"); }
+  const used = new Set([...SPOTS.map(s=>s.photo), ...BIZ.map(b=>b.photo)].filter(Boolean));
+  $("#credits").innerHTML = [...used].filter(k=>PHOTOS[k]).map(k => `<li>${PHOTOS[k].title}: <a href="${PHOTOS[k].page}" target="_blank" rel="noopener">${esc(PHOTOS[k].by)}, ${esc(PHOTOS[k].lic)}</a></li>`).join("");
+  show(); renderAll();
+  makeQR($("#qrMain"), location.href.split("#")[0], 120);
+  setInterval(() => { renderLocal(); renderCounts(); }, 60000);
+})();
 </script>
 </body>
 </html>
