@@ -329,24 +329,45 @@ const PHOTOS = {
  },
  "bens": {
   "src": "img/bens.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Inland_Blue_Hole_Ben%E2%80%99s_Cave_Lucayan_National_Park_of_the_Bahamas_in_Grand_Bahama.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Ben%E2%80%99s_Cave_Inland_Blue_Hole_Lucayan_National_Park_of_the_Bahamas_in_Grand_Bahama.jpg",
   "by": "EgorovaSvetlana",
   "lic": "CC BY-SA 4.0",
   "title": "Ben’s Cave blue hole"
  },
+ "groves": {
+  "src": "img/groves.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:TheGardenOfTheGrovesChurch.JPG",
+  "by": "Pietro",
+  "lic": "CC BY-SA 3.0",
+  "title": "Garden of the Groves chapel"
+ },
  "taino": {
   "src": "img/taino.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Taino_Beach_-_panoramio_(5).jpg",
-  "by": "qwesy qwesy",
-  "lic": "CC BY 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Taino_Beach,_Grand_Bahama_Island,_Bahamas.jpg",
+  "by": "Didier Moïse",
+  "lic": "CC BY-SA 4.0",
   "title": "Taino Beach"
  },
  "portlucaya": {
   "src": "img/portlucaya.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Port_Lucaya_Marketplace_Entrance.jpg",
+  "by": "Pietro",
+  "lic": "CC BY-SA 3.0",
+  "title": "Port Lucaya Marketplace"
+ },
+ "market": {
+  "src": "img/market.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Port_Lucaya_Marina_%5E_Marketplace_-_panoramio.jpg",
   "by": "qwesy qwesy",
   "lic": "CC BY 3.0",
-  "title": "Port Lucaya Marketplace"
+  "title": "Inside Port Lucaya Marketplace"
+ },
+ "marina": {
+  "src": "img/marina.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Peterson_Cay_National_Park_with_Fringing_Coral_Reefs_in_Grand_Bahama.jpg",
+  "by": "EgorovaSvetlana",
+  "lic": "CC BY-SA 4.0",
+  "title": "Reef water off Peterson Cay"
  },
  "paradise": {
   "src": "img/paradise.jpg",
@@ -368,6 +389,13 @@ const PHOTOS = {
   "by": "Tjones242",
   "lic": "CC BY-SA 4.0",
   "title": "Conch salad"
+ },
+ "fishfry": {
+  "src": "img/fishfry.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taino_Beach_-_panoramio.jpg",
+  "by": "Pietro Valocchi",
+  "lic": "CC BY 3.0",
+  "title": "Taino Beach, next to Smith’s Point"
  }
 };
 
@@ -395,7 +423,7 @@ const SPOTS = [
   {name:"Ben’s Cave and the blue holes",cat:"nature",zone:"east",photo:"bens",area:"Lucayan National Park",price:"Park entry fee",best:"Morning, before it gets hot",about:"Walk down wooden steps to a clear inland blue hole, part of one of the longest underwater cave systems in the world. Then cross the mangrove boardwalk to the beach."},
   {name:"Taino Beach",cat:"beach",zone:"lucaya",photo:"taino",area:"Lucaya",price:"Free",best:"Afternoon",about:"Easy to reach from the Lucaya hotels, with calm water and beach bars nearby."},
   {name:"Port Lucaya Marketplace",cat:"shop",zone:"lucaya",photo:"portlucaya",area:"Port Lucaya",price:"Free to walk around",best:"Evening, for live music",about:"Shops, a straw market, restaurants and live music around the marina."},
-  {name:"Dive and dolphin trips",cat:"water",zone:"lucaya",photo:"marina",area:"Port Lucaya marina",price:"Tour price",best:"Book a day ahead",about:"Diving, snorkel trips and dolphin encounters leave from the Port Lucaya marina."},
+  {name:"Dive and dolphin trips",cat:"water",zone:"lucaya",photo:"marina",area:"Port Lucaya marina",price:"Tour price",best:"Book a day ahead",about:"Diving, snorkel trips and dolphin encounters leave from the Port Lucaya marina and head out to the reefs off the south shore."},
   {name:"Smith’s Point Fish Fry",cat:"food",zone:"lucaya",photo:"fishfry",area:"Smith’s Point, next to Taino Beach",price:"$",best:"Wednesday night",about:"Fresh fried fish, conch and music with locals at the weekly fish fry."},
   {name:"Garden of the Groves",cat:"nature",zone:"lucaya",photo:"groves",area:"Midshipman Road, east of Lucaya",price:"Entry fee",best:"Morning or late afternoon",about:"Gardens, waterfalls, walking trails and a small hilltop chapel. Good for families."},
   {name:"Paradise Cove and Deadman’s Reef",cat:"water",zone:"emr",photo:"paradise",area:"Southwest coast, past Eight Mile Rock",price:"Small beach fee",best:"Calm mornings",about:"Snorkel from the beach out to a shallow reef full of fish. Snorkel gear can be rented on the beach."},
@@ -420,8 +448,8 @@ const wk = (o,c) => [null,[o,c],[o,c],[o,c],[o,c],[o,c],[o,c]];
 const BIZ = [
   {name:"Sea Grape Café",cat:"eat",zone:"fpo",icon:"☕",area:"Downtown Freeport",phone:"242-555-0141",about:"Breakfast, johnnycake and fresh juice.",hours:[["8:00","14:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["7:00","15:00"],["8:00","15:00"]]},
   {name:"Lucaya Conch Shack",cat:"eat",zone:"lucaya",photo:"conch2",area:"Lucaya",phone:"242-555-0172",about:"Conch salad, fritters and cracked conch made to order.",hours:[null,["11:00","21:00"],["11:00","21:00"],["11:00","21:00"],["11:00","22:00"],["11:00","22:00"],["11:00","22:00"]]},
-  {name:"Island Threads",cat:"shop",zone:"lucaya",icon:"👕",area:"Port Lucaya Marketplace",phone:"242-555-0118",about:"Local-made shirts, hats and gifts.",hours:[["12:00","18:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","20:00"],["10:00","20:00"]]},
-  {name:"Straw Works",cat:"shop",zone:"lucaya",icon:"👜",area:"Port Lucaya Marketplace",phone:"242-555-0190",about:"Handwoven straw bags, baskets and hats.",hours:wk("9:00","17:00")},
+  {name:"Island Threads",cat:"shop",zone:"lucaya",icon:"👕",photo:"market",area:"Port Lucaya Marketplace",phone:"242-555-0118",about:"Local-made shirts, hats and gifts.",hours:[["12:00","18:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","19:00"],["10:00","20:00"],["10:00","20:00"]]},
+  {name:"Straw Works",cat:"shop",zone:"lucaya",icon:"👜",photo:"market",area:"Port Lucaya Marketplace",phone:"242-555-0190",about:"Handwoven straw bags, baskets and hats.",hours:wk("9:00","17:00")},
   {name:"Quick Fix Phone Repair",cat:"service",zone:"fpo",icon:"📱",area:"Freeport",phone:"242-555-0133",about:"Screen and battery repair, often the same day.",hours:[null,["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["9:00","17:00"],["10:00","14:00"]]},
   {name:"Eight Mile Rock Laundry",cat:"service",zone:"emr",icon:"🧺",area:"Eight Mile Rock",phone:"242-555-0156",about:"Wash, dry and fold. Drop off in the morning, pick up by evening.",hours:[null,["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"],["7:00","19:00"]]},
   {name:"Blue Hole Kayaks",cat:"tour",zone:"east",icon:"🛶",area:"Near Lucayan National Park",phone:"242-555-0164",about:"Kayak rentals and guided mangrove trips.",hours:[["9:00","16:00"],null,["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"],["9:00","16:00"]]},
